@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bullshit.endpoint.dao.ScheduleMapper">
+
+	<resultMap type="schedule" id="scheduleBean">
+		<result column="id" property="id" />
+		<result column="doc_id" property="doc_id" />
+		<result column="pat_id" property="pat_id" />
+		<result column="group_id" property="group_id" />
+		<result column="scheduletime" property="scheduletime" />
+		<result column="content" property="content" />
+		<result column="ctime" property="ctime" />
+		<result column="mtime" property="mtime" />
+	</resultMap>
+
+  <select id="getScheduleListById" resultMap="scheduleBean">
+           select id,doc_id,pat_id,group_id,scheduletime,content,ctime,mtime from schedule where doc_id=#{doc_id}
+  </select>
+  
+</mapper>
