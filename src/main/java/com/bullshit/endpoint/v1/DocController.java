@@ -233,7 +233,6 @@ public class DocController {
 				account2.setEmergTel("0103456789");
 				account2.setDescription("从业十五年，一直被模仿，从未被超越");
 				account2.setDeptname("外科" + i);
-				docList.add(account2);
 			}
 
 		}
