@@ -1,11 +1,11 @@
-³ÌĞòÈë¿Ú
+ç¨‹åºå…¥å£
   v1.DocController
- (v1,v2 ÊÇÊ²Ã´ÒâË¼ÄØ£¬µ±°æ±¾Éı¼¶µÄÊ±ºò£¬²»ÖÁÓÚ³åÍ»)
+ (v1,v2 æ˜¯ä»€ä¹ˆæ„æ€å‘¢ï¼Œå½“ç‰ˆæœ¬å‡çº§çš„æ—¶å€™ï¼Œä¸è‡³äºå†²çª)
 
-×Ô¶¨ÒåmapperµÄÊ±ºò£¬mapper.java ºÍmapper.xml ×îºÃÓÃÒ»¸öÃû×Ö£¬×îºÃ·ÅÍ¬Ò»Î»ÖÃ £¬
-Èç¹ûĞèÒª×Ô¶¨ÒåÆäËûµÄÎ»ÖÃµÄÊ±ºò £¬¼ÇµÃĞŞ¸ÄapplicationContext.xmlÖĞµÄMapperScannerConfigurerÅäÖÃ
+è‡ªå®šä¹‰mapperçš„æ—¶å€™ï¼Œmapper.java å’Œmapper.xml æœ€å¥½ç”¨ä¸€ä¸ªåå­—ï¼Œæœ€å¥½æ”¾åŒä¸€ä½ç½® ï¼Œ
+å¦‚æœéœ€è¦è‡ªå®šä¹‰å…¶ä»–çš„ä½ç½®çš„æ—¶å€™ ï¼Œè®°å¾—ä¿®æ”¹applicationContext.xmlä¸­çš„MapperScannerConfigureré…ç½®
 
-mapper.xml ÖĞµÄnamespaceÃû×ÖÊÇmapperµÄ°üÃû+ÀàÃû
+mapper.xml ä¸­çš„namespaceåå­—æ˜¯mapperçš„åŒ…å+ç±»å
 
-×Ô¶¨ÒåÒì³£  ApiException ´«Èë²ÎÊı´íÎó×´Ì¬ÂëºÍmessage
-throw new ApiException(500, "·şÎñÆ÷Òì³£");
+è‡ªå®šä¹‰å¼‚å¸¸  ApiException ä¼ å…¥å‚æ•°é”™è¯¯çŠ¶æ€ç å’Œmessage
+throw new ApiException(500, "æœåŠ¡å™¨å¼‚å¸¸");
