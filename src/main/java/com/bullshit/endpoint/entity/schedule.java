@@ -26,11 +26,11 @@ public class Schedule implements Serializable{
 	 */
 	private int pat_id;
 	/**
-	 * 任务时间（提醒 这个时间点干嘛）
+	 * 任务时间（提�?这个时间点干嘛）
 	 */
 	private Timestamp scheduletime;
 	/**
-	 * 任务简单描述
+	 * 任务�?��描述
 	 */
 	private String content;
 	/**
