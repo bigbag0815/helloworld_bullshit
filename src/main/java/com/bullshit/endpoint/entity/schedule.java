@@ -7,7 +7,7 @@ import java.sql.Timestamp;
  * @version 1.0
  * @created 17-十月-2014 18:30:43
  */
-public class schedule implements Serializable{
+public class Schedule implements Serializable{
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class schedule implements Serializable{
 	/**
 	 * 
 	 */
-	public schedule() {
+	public Schedule() {
 		super();
 	}
 	/**
@@ -54,7 +54,7 @@ public class schedule implements Serializable{
 	 * @param ctime
 	 * @param mtime
 	 */
-	public schedule(int id, int doc_id, int pat_id,
+	public Schedule(int id, int doc_id, int pat_id,
 			Timestamp scheduletime, String content, int group_id,
 			Timestamp ctime, Timestamp mtime) {
 		super();

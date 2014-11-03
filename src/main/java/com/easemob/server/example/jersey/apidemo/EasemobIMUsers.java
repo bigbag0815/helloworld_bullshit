@@ -800,17 +800,17 @@ public class EasemobIMUsers {
 
 	public static void main(String[] args) {
 		
-		Properties proaa = System.getProperties();
-
-		proaa.put("https.proxyHost", "proxysv");
-		proaa.put("https.proxyPort", "80");
-		
-		proaa.put("http.proxyHost", "proxysv");
-		proaa.put("http.proxyPort", "80");
+//		Properties proaa = System.getProperties();
+//
+//		proaa.put("https.proxyHost", "proxysv");
+//		proaa.put("https.proxyPort", "80");
+//		
+//		proaa.put("http.proxyHost", "proxysv");
+//		proaa.put("http.proxyPort", "80");
 //		
 		
 		ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
-		dataNode.put("username", "kenshinntets-ttt1");
+		dataNode.put("username", "aaa-ttt1");
 		dataNode.put("password", "12345567");
 		ObjectNode resNode = createNewIMUserSingle(dataNode);
 		

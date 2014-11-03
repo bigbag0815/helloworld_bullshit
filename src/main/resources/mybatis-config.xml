@@ -6,7 +6,7 @@
 	</settings>
 	
 	<typeAliases>
-	  <typeAlias alias="schedule" type="com.bullshit.endpoint.entity.schedule"/>
+	  <typeAlias alias="schedule" type="com.bullshit.endpoint.entity.Schedule"/>
 	</typeAliases>
 	
 </configuration>
