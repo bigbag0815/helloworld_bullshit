@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 public class Schedule implements Serializable{
 
 	/**
-	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	/**
@@ -26,11 +25,11 @@ public class Schedule implements Serializable{
 	 */
 	private int pat_id;
 	/**
-	 * 任务时间（提�?这个时间点干嘛）
+	 * 任务时间（提�?这个时间点干嘛）
 	 */
 	private Timestamp scheduletime;
 	/**
-	 * 任务�?��描述
+	 * 任务�?��描述
 	 */
 	private String content;
 	/**
