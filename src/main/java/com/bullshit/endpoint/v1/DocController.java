@@ -51,25 +51,23 @@ public class DocController {
 		for (int i = 1; i < 3; i++) {
 			PatientCaseBean caseBean = new PatientCaseBean();
 			Account account = new Account();
-			account.setId(1);
-			account.setName("张三-" + String.valueOf(i));
-			account.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-			account.setAge("35");
-			account.setTitle("病人");
-			account.setProfessional("外科，手术");
-			account.setTelphone("18622345678");
-			account.setEmergTel("0103456789");
-			account.setDescription("从业十五年，一直被模仿，从未被超越");
-			account.setDeptname("外科");
+			account.setId("13340857899");
+			account.setName("李四");
+			account.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
+			account.setAge("25");
+			
 			/*
-			 * role_flg 1.doctor 2.patient
+			 * roleflg 1.doc 2.pat
 			 */
-			account.setRole_flg("2");
-			account.setHxusername("xxxxxxxxxxxxxxxxxxx");
-			account.setHxpassword("xxxxxxxxxxxxxxxxxxx");
+			account.setRoleflg("pat");
+
+			account.setHxusername("Hxusername");
+			account.setHxpassword("Hxpassword");
 			account.setCtime(new Timestamp(System.currentTimeMillis()));
 			account.setMtime(new Timestamp(System.currentTimeMillis()));
-
+			account.setPatAllergyDrug("青霉素");
+			account.setPatPastHistory("高血压，低血糖");
+			account.setPatEmergPhone("13388889999");
 			/* 患者的相关信息 */
 			caseBean.setAccount(account);
 
@@ -77,11 +75,11 @@ public class DocController {
 			List<Cases> caseList = new ArrayList<Cases>();
 			for (int j = 0; j < 3; j++) {
 				Cases caseinfo = new Cases();
-				caseinfo.setId(i);
-				caseinfo.setPatient_id(1);
-				caseinfo.setDoctor_id(1);
-				caseinfo.setAllergyDrug("青霉素过敏");
-				caseinfo.setHandlingSuggestion("住院观察");
+				caseinfo.setCaseId("13000005678case"+i);
+				caseinfo.setPatId("13000005678");
+				caseinfo.setPatReport("最近白带增多，有异味");;
+				caseinfo.setMedicalexamination("picture  url");
+				caseinfo.setDocSuggestion("建议到医院复查一下");
 				caseList.add(caseinfo);
 			}
 			caseBean.setCaseList(caseList);
@@ -101,7 +99,7 @@ public class DocController {
 			Department dept = new Department();
 			dept.setId(i);
 			dept.setName(deptnames[i]);
-			dept.setDescription("专业十五年，一直被模仿，从未被超越");
+			dept.setDescription("外科DescriptionDescriptionDescriptionDescriptionDescription");
 			deptList.add(dept);
 		}
 		return deptList;
@@ -120,44 +118,45 @@ public class DocController {
 
 		if (StringUtils.isNotEmpty(did)) {
 			Account account = new Account();
-			account.setId(1);
-			account.setName("张三");
-			account.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-			account.setAge("35");
-			account.setTitle("教授");
-			account.setProfessional("外科，手术");
-			account.setTelphone("18622345678");
-			account.setEmergTel("0103456789");
-			account.setDescription("从业十五年，一直被模仿，从未被超越");
-			account.setDeptname("外科");
+			account.setId("13340855555");
+			account.setName("王五");
+			account.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
+			account.setAge("55");
+			account.setDocTitle("主治医师");
+			account.setDocProfessional("妇产，婴幼儿保健");
+			account.setMobilePhone("18622345678");
+			account.setTelPhone("0103456789");
+			account.setDocDescription("2007年，毕业于中国医科大学毕业。");
+			account.setDocDepartmentName("妇产科");
 
 			Account account2 = new Account();
-			account2.setId(2);
-			account2.setName("李四");
-			account2.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-			account2.setAge("45");
-			account2.setTitle("教授");
-			account2.setProfessional("外科，手术");
-			account2.setTelphone("18622345678");
-			account2.setEmergTel("0103456789");
-			account2.setDescription("从业十五年，一直被模仿，从未被超越");
-			account2.setDeptname("外科");
+			account2.setId("13340857777");
+			account2.setName("李七");
+			account2.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
+			account2.setAge("77");
+			account2.setDocTitle("教授");
+			account2.setDocProfessional("妇产，婴幼儿保健");
+			account2.setMobilePhone("18622345678");
+			account2.setTelPhone("0103456789");
+			account2.setDocDescription("留学海外多年，有多年临床经验");
+			account2.setDocDepartmentName("妇产科");
 
 			docList.add(account);
 			docList.add(account2);
 		} else {
 			for (int i = 1; i < 4; i++) {
-				Account account2 = new Account();
-				account2.setId(i);
-				account2.setName("李四");
-				account2.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-				account2.setAge("45");
-				account2.setTitle("教授");
-				account2.setProfessional("外科，手术");
-				account2.setTelphone("18622345678");
-				account2.setEmergTel("0103456789");
-				account2.setDescription("从业十五年，一直被模仿，从未被超越");
-				account2.setDeptname("外科" + i);
+				Account account3 = new Account();
+				account3.setId("13340857777");
+				account3.setName("李七");
+				account3.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
+				account3.setAge("77");
+				account3.setDocTitle("教授");
+				account3.setDocProfessional("妇产，婴幼儿保健");
+				account3.setMobilePhone("18622345678");
+				account3.setTelPhone("0103456789");
+				account3.setDocDescription("留学海外多年，有多年临床经验");
+				account3.setDocDepartmentName("妇产科");
+				docList.add(account3);
 			}
 
 		}

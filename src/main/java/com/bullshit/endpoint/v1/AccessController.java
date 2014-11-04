@@ -23,6 +23,7 @@ import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.DocBusinessLogic;
+import com.bullshit.endpoint.utils.Text2Md5;
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -49,43 +50,36 @@ public class AccessController {
 		System.out.println(username);
 		System.out.println(password);
 		System.out.println(roleflg);
+
 		Boolean isContainUser = false;
 		if (!isContainUser) {
-			// password need encode,md5
-			
-			ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
-			String hxusername = username;
-			String hxpassword = password;
-			dataNode.put("username", hxusername);
-			dataNode.put("password", hxpassword);
-			
-			ObjectNode resNode = EasemobIMUsers.getIMUsersByPrimaryKey(username);
-			
-			if (resNode.isNull()) {
-				
-				resNode = EasemobIMUsers.createNewIMUserSingle(dataNode);
-				
-				Account account = new Account();
-				account.setId(1);
-				account.setName("张三");
-				account.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-				account.setAge("35");
-				account.setTitle("教授");
-				account.setProfessional("外科，手术");
-				account.setTelphone("18622345678");
-				account.setEmergTel("0103456789");
-				account.setDescription("从业十五年，一直被模仿，从未被超越");
-				account.setDeptname("外科");
-				/*
-				 * role_flg 1.doctor 2.patient
-				 */
-				account.setRole_flg("1");
-				account.setHxusername(hxusername);
-				account.setHxpassword(hxpassword);
-				account.setCtime(new Timestamp(System.currentTimeMillis()));
-				account.setMtime(new Timestamp(System.currentTimeMillis()));
 
-				return account;
+			String hxusername = Text2Md5.getMD5Text(username);
+			String hxpassword = Text2Md5.getMD5Text(password);
+			ObjectNode resNode01 = EasemobIMUsers.getIMUsersByPrimaryKey(hxusername);
+
+			if (resNode01.has("error")
+					&& "service_resource_not_found".equals(resNode01.get("error").asText())) {
+
+				ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
+				dataNode.put("username", hxusername);
+				dataNode.put("password", hxpassword);
+				ObjectNode resNode02 = EasemobIMUsers.createNewIMUserSingle(dataNode);
+
+				if (!resNode02.has("error")) {
+					Account account = new Account();
+					account.setId("18240851231");
+					/*
+					 * roleflg 1.doc 2.pat
+					 */
+					account.setRoleflg("doc");
+					account.setHxusername(hxusername);
+					account.setHxpassword(hxpassword);
+					account.setCtime(new Timestamp(System.currentTimeMillis()));
+					account.setMtime(new Timestamp(System.currentTimeMillis()));
+
+					return account;
+				}
 			}
 		} else {
 			try {
@@ -101,12 +95,7 @@ public class AccessController {
 		}
 		return null;
 	}
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 登录验证 login 是医生和病人公用部分 给front返回 hxusername and hxpassword login
 	 * 目前缺少token验证，暂且先不管
@@ -121,28 +110,28 @@ public class AccessController {
 		System.out.println(password);
 		Boolean isContainUser = true;
 		if (isContainUser) {
-			// password need encode,md5
 			if ("admin".equals(password)) {
 				Account account = new Account();
-				account.setId(1);
+				account.setId("18240851231");
 				account.setName("张三");
-				account.setImage_url("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
+				account.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
 				account.setAge("35");
-				account.setTitle("教授");
-				account.setProfessional("外科，手术");
-				account.setTelphone("18622345678");
-				account.setEmergTel("0103456789");
-				account.setDescription("从业十五年，一直被模仿，从未被超越");
-				account.setDeptname("外科");
+				account.setDocTitle("教授");
+				account.setDocProfessional("外科，手术");
+				account.setMobilePhone("18622345678");
+				account.setTelPhone("0103456789");
+				account.setDocDescription("从业十五年，一直被模仿，从未被超越");
+				account.setDocDepartmentName("外科");
 				/*
-				 * role_flg 1.doctor 2.patient
+				 * roleflg 1.doc 2.pat
 				 */
-				account.setRole_flg("1");
-				account.setHxusername("xxxxxxxxxxxxxxxxxxx");
-				account.setHxpassword("xxxxxxxxxxxxxxxxxxx");
+				account.setRoleflg("doc");
+
+				account.setHxusername("");
+				account.setHxpassword("");
 				account.setCtime(new Timestamp(System.currentTimeMillis()));
 				account.setMtime(new Timestamp(System.currentTimeMillis()));
-
+				
 				return account;
 			}
 		} else {

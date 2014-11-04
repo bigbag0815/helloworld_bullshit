@@ -810,14 +810,17 @@ public class EasemobIMUsers {
 //		
 		
 		ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
-		dataNode.put("username", "lover-ttt1");
+		dataNode.put("username", "lover-ttt5");
 		dataNode.put("password", "12345567");
-		ObjectNode resNode = createNewIMUserSingle(dataNode);
+//		ObjectNode resNode = createNewIMUserSingle(dataNode);
 		
 //		 {"action":"post","application":"4d7e4ba0-dc4a-11e3-90d5-e1ffbaacdaf5","path":"/users","uri":"https://a1.easemob.com/easemob-demo/chatdemoui/users","entities":[{"uuid":"240a5cfa-52d8-11e4-8fd0-a36007b50c18","type":"user","created":1413204899903,"modified":1413204899903,"username":"kenshinntets-Tom1","activated":true}],"timestamp":1413204899902,"duration":298,"organization":"easemob-demo","applicationName":"chatdemoui"}
 		
-//		ObjectNode resNode2 = getIMUsersByPrimaryKey("kenshinntets-Tom1");
+		ObjectNode resNode2 = getIMUsersByPrimaryKey("lover-ttt5");
 		
+		if(resNode2.has("error")){
+			System.out.println(resNode2.get("error").asText());
+		}
 //		ObjectNode resNode3 = deleteIMUserByUserPrimaryKey("kenshinntets-Tom1");
 	
 	}

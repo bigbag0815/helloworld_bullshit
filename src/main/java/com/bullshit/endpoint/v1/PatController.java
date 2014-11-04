@@ -1,5 +1,8 @@
 package com.bullshit.endpoint.v1;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -46,16 +49,19 @@ public class PatController {
 	@GET
 	@Path("/caseinfo/{patient_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Cases getCaseInfoByPatientId(
+	public List<Cases> getCaseInfoByPatientId(
 			@PathParam("patient_id") String patient_id) throws ApiException {
-		Cases caseinfo = new Cases();
-		caseinfo.setId(1);
-		caseinfo.setPatient_id(Integer.valueOf(patient_id));
-		// 根据相关需要 ，把名字也给返回
-		caseinfo.setDoctor_id(1);
-		caseinfo.setAllergyDrug("青霉素过敏");
-		caseinfo.setHandlingSuggestion("住院观察");
-		return caseinfo;
+		List<Cases> caseList = new ArrayList<Cases>();
+		for (int j = 0; j < 3; j++) {
+			Cases caseinfo = new Cases();
+			caseinfo.setCaseId("13000005678"+j);
+			caseinfo.setPatId("13000005678");
+			caseinfo.setPatReport("最近白带增多，有异味");;
+			caseinfo.setMedicalexamination("picture  url");
+			caseinfo.setDocSuggestion("建议到医院复查一下");
+			caseList.add(caseinfo);
+		}
+		return caseList;
 	};
 
 }
