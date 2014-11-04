@@ -1,4 +1,6 @@
 package com.bullshit.endpoint.v2;
 
-public class DocController {
+public class AccessController {
+
+
 }
