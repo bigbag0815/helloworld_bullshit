@@ -810,7 +810,7 @@ public class EasemobIMUsers {
 //		
 		
 		ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
-		dataNode.put("username", "aaa-ttt1");
+		dataNode.put("username", "lover-ttt1");
 		dataNode.put("password", "12345567");
 		ObjectNode resNode = createNewIMUserSingle(dataNode);
 		
