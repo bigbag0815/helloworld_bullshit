@@ -1,17 +1,11 @@
 package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -20,10 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bullshit.endpoint.entity.Account;
-import com.bullshit.endpoint.entity.Schedule;
-import com.bullshit.endpoint.exception.ApiException;
-import com.bullshit.endpoint.service.DocBusinessLogic;
+import com.bullshit.endpoint.entity.ErrInfo;
+import com.bullshit.endpoint.entity.vo.AccessVo;
+import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
+
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -34,133 +29,183 @@ public class AccessController {
 	Logger log = LoggerFactory.getLogger(AccessController.class);
 
 	@Autowired
-	DocBusinessLogic docLogic;
-
+	AccessBusinessLogic accessLogic;
+	
 	/**
-	 * 登录验证 login 是医生和病人公用部分 给front返回 hxusername and hxpassword login
-	 * 目前缺少token验证，暂且先不管
+	 * 用户注册
+	 * 将 用户名、密码、roleflg、hxusername、hxpassword 插入db
 	 * **/
 	@POST
 	@Path("/register")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account registerinfo(@FormParam("username") String username,
+	public AccessVo registerAccountInfo(@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("roleflg") String roleflg) throws ApiException {
+			@FormParam("roleflg") String roleflg) {
 		System.out.println(username);
 		System.out.println(password);
 		System.out.println(roleflg);
-
-		Boolean isContainUser = false;
-		if (!isContainUser) {
-
-			String hxusername = Text2Md5.getMD5Text(username);
-			String hxpassword = Text2Md5.getMD5Text(password);
-			ObjectNode resNode01 = EasemobIMUsers.getIMUsersByPrimaryKey(hxusername);
-
-			if (resNode01.has("error")
-					&& "service_resource_not_found".equals(resNode01.get("error").asText())) {
-
-				ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
-				dataNode.put("username", hxusername);
-				dataNode.put("password", hxpassword);
-				ObjectNode resNode02 = EasemobIMUsers.createNewIMUserSingle(dataNode);
-
-				if (!resNode02.has("error")) {
+		
+		AccessVo accessVo = new AccessVo();
+		try {
+			//bullshitdb中是否存在此账号
+			if (!accessLogic.isContainUser(username)) {
+				String hxusername = Text2Md5.getMD5Text(username);
+				String hxpassword = Text2Md5.getMD5Text(password);
+				ObjectNode resNode01 = EasemobIMUsers.getIMUsersByPrimaryKey(hxusername);
+				//hxdb中是否存在此账号
+				if (resNode01.has("error")
+						&& "service_resource_not_found".equals(resNode01.get("error").asText())) {
+					//创建hx账号
+					ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
+					dataNode.put("username", hxusername);
+					dataNode.put("password", hxpassword);
+					ObjectNode resNode02 = EasemobIMUsers.createNewIMUserSingle(dataNode);
+					
 					Account account = new Account();
-					account.setId("18240851231");
-					/*
-					 * roleflg 1.doc 2.pat
-					 */
-					account.setRoleflg("doc");
-					account.setHxusername(hxusername);
-					account.setHxpassword(hxpassword);
-					account.setCtime(new Timestamp(System.currentTimeMillis()));
-					account.setMtime(new Timestamp(System.currentTimeMillis()));
-
-					return account;
+					//hx账号创建成功，将hxusername和hxpassword写入DB
+					if (!resNode02.has("error")) {
+						account.setId(username);
+						account.setPw(Text2Md5.getMD5Text(password));
+						/*
+						 * roleflg 1.doc 2.pat
+						 */
+						account.setRoleflg("doc");
+						account.setIsactive("active");
+						account.setHxusername(hxusername);
+						account.setHxpassword(hxpassword);
+						account.setCtime(new Timestamp(System
+								.currentTimeMillis()));
+						account.setMtime(new Timestamp(System
+								.currentTimeMillis()));
+						accessLogic.registerUser(account);
+					//hx账号创建失败，不写入hxusername和hxpassword
+					}else{
+						account.setId(username);
+						account.setPw(Text2Md5.getMD5Text(password));
+						/*
+						 * roleflg 1.doc 2.pat
+						 */
+						account.setRoleflg("doc");
+						account.setIsactive("active");
+						account.setCtime(new Timestamp(System
+								.currentTimeMillis()));
+						account.setMtime(new Timestamp(System
+								.currentTimeMillis()));
+						accessLogic.registerUser(account);
+					}
+					accessVo.setRsStatus("ok");
+					accessVo.setAccountInfo(account);
+				} else if (resNode01.has("entities")) {
+					// hxusername已经被注册
+					accessVo.setRsStatus("ng");
+					accessVo.setErrInfo(new ErrInfo("101", "此用户名已被hx注册"));
 				}
+			}else {
+				//bullshitdb中此用户名已经被注册
+				accessVo.setRsStatus("ng");
+				accessVo.setErrInfo(new ErrInfo("102", "您输入的用户名已被注册"));
 			}
-		} else {
-			try {
-				throw new ApiException(500, "服务器异常");
-			} catch (ApiException e) {
-				e.printStackTrace();
-				if (e.getCode() == 404) {
-					return null;
-				} else {
-					throw e;
-				}
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accessVo.setRsStatus("ng");
+			accessVo.setErrInfo(new ErrInfo("500", e.getMessage()));
 		}
-		return null;
+		
+		return accessVo;
 	}
 
 	/**
 	 * 登录验证 login 是医生和病人公用部分 给front返回 hxusername and hxpassword login
-	 * 目前缺少token验证，暂且先不管
 	 * **/
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account logininfo(@FormParam("username") String username,
+	public AccessVo loginAccountInfo(@FormParam("username") String username,
+			@FormParam("password") String password) {
+		System.out.println(username);
+		System.out.println(password);
+		AccessVo accessVo = new AccessVo();
+		try {
+			Account account = accessLogic.getAccountInfo(username);
+			if (null != account) {
+				if (Text2Md5.getMD5Text(password).equals(account.getPw())) {
+					
+					if (account.getHxusername() == null) {
+						String hxusername = Text2Md5.getMD5Text(username);
+						String hxpassword = Text2Md5.getMD5Text(password);
+						ObjectNode dataNode = JsonNodeFactory.instance.objectNode();
+						dataNode.put("username", hxusername);
+						dataNode.put("password", hxpassword);
+						ObjectNode resNode02 = EasemobIMUsers.createNewIMUserSingle(dataNode);
+						if (!resNode02.has("error")) {
+							account.setHxusername(hxusername);
+							account.setHxpassword(hxpassword);
+						}
+					}
+					accessVo.setRsStatus("ok");
+					accessVo.setAccountInfo(account);
+				} else {
+					accessVo.setRsStatus("ng");
+					accessVo.setErrInfo(new ErrInfo("201", "您输入的密码不正确"));
+				}
+			} else {
+				accessVo.setRsStatus("ng");
+				accessVo.setErrInfo(new ErrInfo("202", "您输入的用户名不存在"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accessVo.setRsStatus("ng");
+			accessVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		return accessVo;
+	}
+	
+	
+/**	bk
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Account loginAccountInfo(@FormParam("username") String username,
 			@FormParam("password") String password) throws ApiException {
 		System.out.println(username);
 		System.out.println(password);
-		Boolean isContainUser = true;
-		if (isContainUser) {
-			if ("admin".equals(password)) {
-				Account account = new Account();
-				account.setId("18240851231");
-				account.setName("张三");
-				account.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-				account.setAge("35");
-				account.setDocTitle("教授");
-				account.setDocProfessional("外科，手术");
-				account.setMobilePhone("18622345678");
-				account.setTelPhone("0103456789");
-				account.setDocDescription("从业十五年，一直被模仿，从未被超越");
-				account.setDocDepartmentName("外科");
-				/*
-				 * roleflg 1.doc 2.pat
-				 */
-				account.setRoleflg("doc");
 
-				account.setHxusername("");
-				account.setHxpassword("");
-				account.setCtime(new Timestamp(System.currentTimeMillis()));
-				account.setMtime(new Timestamp(System.currentTimeMillis()));
-				
+		Account account = accessLogic.getAccountInfo(username);
+		if (account != null) {
+			password = Text2Md5.getMD5Text(password);
+			if (password.equals(account.getPw())) {
 				return account;
-			}
-		} else {
-			try {
-				throw new ApiException(500, "服务器异常");
-			} catch (ApiException e) {
-				e.printStackTrace();
-				if (e.getCode() == 404) {
-					return null;
-				} else {
-					throw e;
-				}
 			}
 		}
 		return null;
 	}
 
-	@GET
-	@Path("/schedulelist/page/{did}")
+	**/
+	
+	/**
+	 * 更新Account信息 是医生
+	 * **/
+	
+	/**	
+	@POST
+	@Path("/update/docinfo")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Schedule> docscheduleListOrder(@PathParam("did") String did,
-			@DefaultValue("1") @QueryParam("from") int fromNum,
-			@DefaultValue("10") @QueryParam("to") int toNum,
-			@DefaultValue("id") @QueryParam("order") String order)
-			throws ApiException {
-		/* 测试含有异常的方法 */
-		List<Schedule> schedulelist = docLogic.testExcetpion(Integer
-				.valueOf(did));
-		return schedulelist;
-
+	public Account updateDocAccountInfo(Account docAccount) throws Exception {
+		System.out.println("1111111111");
+		if (accessLogic.isContainUser(docAccount.getId())) {
+			System.out.println("22222222222222");
+			docAccount.setMtime(new Timestamp(System.currentTimeMillis()));
+			System.out.println("333333333333333");
+			if(accessLogic.updateAccount(docAccount)>0){
+				System.out.println("44444444444444444");
+				return docAccount;
+			}
+		}
+		return null;
 	}
+	**/
 }

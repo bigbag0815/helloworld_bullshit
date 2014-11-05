@@ -22,6 +22,7 @@ import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.PatientCaseBean;
 import com.bullshit.endpoint.entity.Cases;
 import com.bullshit.endpoint.entity.Department;
+import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.DocBusinessLogic;
 
@@ -162,4 +163,21 @@ public class DocController {
 		}
 		return docList;
 	};
+	
+	
+	
+	@GET
+	@Path("/schedulelist/page/{did}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Schedule> docscheduleListOrder(@PathParam("did") String did,
+			@DefaultValue("1") @QueryParam("from") int fromNum,
+			@DefaultValue("10") @QueryParam("to") int toNum,
+			@DefaultValue("id") @QueryParam("order") String order)
+			throws ApiException {
+		/* 测试含有异常的方法 */
+		List<Schedule> schedulelist = docLogic.testExcetpion(Integer
+				.valueOf(did));
+		return schedulelist;
+
+	}
 }
