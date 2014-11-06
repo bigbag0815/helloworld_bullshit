@@ -1,11 +1,13 @@
 package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -15,10 +17,10 @@ import org.springframework.stereotype.Component;
 
 import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.ErrInfo;
+import com.bullshit.endpoint.entity.vo.AccessReq;
 import com.bullshit.endpoint.entity.vo.AccessVo;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
-
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,14 +39,11 @@ public class AccessController {
 	 * **/
 	@POST
 	@Path("/register")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public AccessVo registerAccountInfo(@FormParam("username") String username,
-			@FormParam("password") String password,
-			@FormParam("roleflg") String roleflg) {
-		System.out.println(username);
-		System.out.println(password);
-		System.out.println(roleflg);
+	public AccessVo registerAccountInfo(AccessReq accessReq) {
+		String username = accessReq.getUsername();
+		String password = accessReq.getPassword();
+		String roleflg = accessReq.getRoleflg();
 		
 		AccessVo accessVo = new AccessVo();
 		try {
@@ -70,7 +69,7 @@ public class AccessController {
 						/*
 						 * roleflg 1.doc 2.pat
 						 */
-						account.setRoleflg("doc");
+						account.setRoleflg(roleflg);
 						account.setIsactive("active");
 						account.setHxusername(hxusername);
 						account.setHxpassword(hxpassword);
@@ -86,7 +85,7 @@ public class AccessController {
 						/*
 						 * roleflg 1.doc 2.pat
 						 */
-						account.setRoleflg("doc");
+						account.setRoleflg(roleflg);
 						account.setIsactive("active");
 						account.setCtime(new Timestamp(System
 								.currentTimeMillis()));
@@ -120,10 +119,10 @@ public class AccessController {
 	 * **/
 	@POST
 	@Path("/login")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public AccessVo loginAccountInfo(@FormParam("username") String username,
-			@FormParam("password") String password) {
+	public AccessVo loginAccountInfo(AccessReq accessReq) {
+		String username = accessReq.getUsername();
+		String password = accessReq.getPassword();
 		System.out.println(username);
 		System.out.println(password);
 		AccessVo accessVo = new AccessVo();
@@ -163,49 +162,52 @@ public class AccessController {
 	}
 	
 	
-/**	bk
+	
+	/**
+	 * 更新DocAccount信息     医生
+	 * **/
 	@POST
-	@Path("/login")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/update/docinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account loginAccountInfo(@FormParam("username") String username,
-			@FormParam("password") String password) throws ApiException {
-		System.out.println(username);
-		System.out.println(password);
-
-		Account account = accessLogic.getAccountInfo(username);
-		if (account != null) {
-			password = Text2Md5.getMD5Text(password);
-			if (password.equals(account.getPw())) {
+	public Account updateDocAccountInfo(Account docAccount) throws Exception {
+		if ("doc".equals(docAccount.getRoleflg())) {
+			Account account = accessLogic.getAccountInfo(docAccount.getId());
+			if(null != account){
+				account.setName(docAccount.getName());
+				account.setAge(docAccount.getAge());
+				account.setSex(docAccount.getSex());
+				account.setImageurl(docAccount.getImageurl());
+				account.setMobilePhone(docAccount.getMobilePhone());
+				account.setTelPhone(docAccount.getTelPhone());
+				account.setDocTitle(docAccount.getDocTitle());
+				account.setDocProfessional(docAccount.getDocHospital());
+				account.setDocDepartmentName(docAccount.getDocDepartmentName());
+				account.setDocDescription(docAccount.getDocDescription());
+				account.setDocHospital(docAccount.getDocHospital());
+			}
+			
+			docAccount.setMtime(new Timestamp(System.currentTimeMillis()));
+			if(accessLogic.updateAccount(account)>0){
 				return account;
 			}
 		}
 		return null;
 	}
-
-	**/
 	
 	/**
-	 * 更新Account信息 是医生
+	 * 更新PatAccount信息     医生
 	 * **/
-	
-	/**	
 	@POST
-	@Path("/update/docinfo")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/update/patinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account updateDocAccountInfo(Account docAccount) throws Exception {
-		System.out.println("1111111111");
-		if (accessLogic.isContainUser(docAccount.getId())) {
-			System.out.println("22222222222222");
-			docAccount.setMtime(new Timestamp(System.currentTimeMillis()));
-			System.out.println("333333333333333");
-			if(accessLogic.updateAccount(docAccount)>0){
-				System.out.println("44444444444444444");
-				return docAccount;
+	public Account updatePatAccountInfo(Account patAccount) throws Exception {
+		if ("pat".equals(patAccount.getRoleflg()) && accessLogic.isContainUser(patAccount.getId())) {
+			patAccount.setMtime(new Timestamp(System.currentTimeMillis()));
+			if(accessLogic.updateAccount(patAccount)>0){
+				return patAccount;
 			}
 		}
 		return null;
 	}
-	**/
+
 }
