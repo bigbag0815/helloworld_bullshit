@@ -2,12 +2,9 @@ package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
@@ -19,6 +16,8 @@ import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.AccessReq;
 import com.bullshit.endpoint.entity.vo.AccessVo;
+import com.bullshit.endpoint.entity.vo.DocReq;
+import com.bullshit.endpoint.entity.vo.PatReq;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
@@ -169,45 +168,92 @@ public class AccessController {
 	@POST
 	@Path("/update/docinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account updateDocAccountInfo(Account docAccount) throws Exception {
-		if ("doc".equals(docAccount.getRoleflg())) {
-			Account account = accessLogic.getAccountInfo(docAccount.getId());
-			if(null != account){
-				account.setName(docAccount.getName());
-				account.setAge(docAccount.getAge());
-				account.setSex(docAccount.getSex());
-				account.setImageurl(docAccount.getImageurl());
-				account.setMobilePhone(docAccount.getMobilePhone());
-				account.setTelPhone(docAccount.getTelPhone());
-				account.setDocTitle(docAccount.getDocTitle());
-				account.setDocProfessional(docAccount.getDocHospital());
-				account.setDocDepartmentName(docAccount.getDocDepartmentName());
-				account.setDocDescription(docAccount.getDocDescription());
-				account.setDocHospital(docAccount.getDocHospital());
+	public AccessVo updateDocAccountInfo(DocReq docReq) throws Exception {
+		System.out.println("update_docinfo");
+		AccessVo accessVo = new AccessVo();
+		try {
+			if ("doc".equals(docReq.getRoleflg())) {
+				Account account = accessLogic.getAccountInfo(docReq.getId());
+				if (null != account) {
+					account.setName(docReq.getName());
+					account.setAge(docReq.getAge());
+					account.setSex(docReq.getSex());
+					account.setImageurl(docReq.getImageurl());
+					account.setMobilePhone(docReq.getMobilePhone());
+					account.setTelPhone(docReq.getTelPhone());
+					account.setDocTitle(docReq.getDocTitle());
+					account.setDocProfessional(docReq.getDocHospital());
+					account.setDocDepartmentName(docReq.getDocDepartmentName());
+					account.setDocDescription(docReq.getDocDescription());
+					account.setDocHospital(docReq.getDocHospital());
+					account.setMtime(new Timestamp(System.currentTimeMillis()));
+					if (accessLogic.updateAccount(account) > 0) {
+						Account acc = accessLogic
+								.getAccountInfo(docReq.getId());
+						accessVo.setAccountInfo(acc);
+						accessVo.setRsStatus("ok");
+					}
+				} else {
+					accessVo.setRsStatus("ng");
+					accessVo.setErrInfo(new ErrInfo("301", "该用户不存在"));
+				}
+			} else {
+				accessVo.setRsStatus("ng");
+				accessVo.setErrInfo(new ErrInfo("302", "该用户不是医生"));
 			}
-			
-			docAccount.setMtime(new Timestamp(System.currentTimeMillis()));
-			if(accessLogic.updateAccount(account)>0){
-				return account;
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accessVo.setRsStatus("ng");
+			accessVo.setErrInfo(new ErrInfo("500", e.getMessage()));
 		}
-		return null;
+		return accessVo;
 	}
 	
 	/**
-	 * 更新PatAccount信息     医生
+	 * 更新PatAccount信息 医生
 	 * **/
 	@POST
 	@Path("/update/patinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Account updatePatAccountInfo(Account patAccount) throws Exception {
-		if ("pat".equals(patAccount.getRoleflg()) && accessLogic.isContainUser(patAccount.getId())) {
-			patAccount.setMtime(new Timestamp(System.currentTimeMillis()));
-			if(accessLogic.updateAccount(patAccount)>0){
-				return patAccount;
+	public AccessVo updatePatAccountInfo(PatReq patReq) throws Exception {
+		AccessVo accessVo = new AccessVo();
+		try {
+			if ("pat".equals(patReq.getRoleflg())) {
+				Account account = accessLogic.getAccountInfo(patReq.getId());
+				if (null != account) {
+					account.setId(patReq.getId());
+					account.setName(patReq.getName());
+					account.setAge(patReq.getAge());
+					account.setSex(patReq.getSex());
+					account.setImageurl(patReq.getImageurl());
+					account.setMobilePhone(patReq.getMobilePhone());
+					account.setTelPhone(patReq.getTelPhone());
+					account.setPatAllergyDrug(patReq.getPatAllergyDrug());
+					account.setPatEmergPerson(patReq.getPatEmergPerson());
+					account.setPatEmergPhone(patReq.getPatEmergPhone());
+					account.setPatPastHistory(patReq.getPatPastHistory());
+					account.setPatStatusFlg(patReq.getPatStatusFlg());
+					account.setMtime(new Timestamp(System.currentTimeMillis()));
+					if (accessLogic.updateAccount(account) > 0) {
+						Account acc = accessLogic
+								.getAccountInfo(patReq.getId());
+						accessVo.setAccountInfo(acc);
+						accessVo.setRsStatus("ok");
+					}
+				} else {
+					accessVo.setRsStatus("ng");
+					accessVo.setErrInfo(new ErrInfo("401", "该用户不存在"));
+				}
+			} else {
+				accessVo.setRsStatus("ng");
+				accessVo.setErrInfo(new ErrInfo("402", "该用户不是患者"));
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accessVo.setRsStatus("ng");
+			accessVo.setErrInfo(new ErrInfo("500", e.getMessage()));
 		}
-		return null;
+		return accessVo;
 	}
 
 }

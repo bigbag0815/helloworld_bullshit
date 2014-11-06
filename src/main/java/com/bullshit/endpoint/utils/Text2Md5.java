@@ -33,6 +33,6 @@ public class Text2Md5 {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		return buf.toString();
+		return buf.toString().substring(8, 24);
 	}
 }
