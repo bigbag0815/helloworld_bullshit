@@ -1,3 +1,6 @@
+http://localhost:8080/bullshit/rest/application.wadl
+
+
 /bullshit/rest/v1/acc/register
 {
 "username":"18310458251",
@@ -48,3 +51,21 @@
 "roleflg":"pat"
 }
 
+
+/bullshit/rest/v1/rel/req
+{
+"docId":"13352212345",
+"patId":"15533478901"
+}
+
+/bullshit/rest/v1/rel/reply
+{
+"docId":"13352212345",
+"patId":"15533478901"
+}
+
+/bullshit/rest/v1/rel/release
+{
+"docId":"13352212345",
+"patId":"15533478901"
+}
