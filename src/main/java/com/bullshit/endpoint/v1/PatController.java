@@ -27,6 +27,7 @@ import com.bullshit.endpoint.entity.Cases;
 import com.bullshit.endpoint.entity.Department;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.DocBusinessLogic;
+import com.bullshit.endpoint.service.PatBusinessLogic;
 
 @Component
 @Path("/v1/pat")
@@ -36,22 +37,15 @@ public class PatController {
 	@Autowired
 	DocBusinessLogic docLogic;
 	
+	@Autowired
+	PatBusinessLogic patLogic;	
 	
 	/* ### 获取所有科室的列表 */
 	@GET
 	@Path("/deptlist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Department> getDepartmentList() throws ApiException {
-		List<Department> deptList = new ArrayList<Department>();
-		String[] deptnames = { "外科", "内科", "精神科", "放射科" };
-		for (int i = 0; i < deptnames.length; i++) {
-			Department dept = new Department();
-			dept.setId(i);
-			dept.setName(deptnames[i]);
-			dept.setDescription("外科DescriptionDescriptionDescriptionDescriptionDescription");
-			deptList.add(dept);
-		}
-		return deptList;
+		return patLogic.getDepartmentList();
 	};
 
 	/* ### 查找医生列表 */
@@ -132,17 +126,7 @@ public class PatController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Cases> getCaseInfoByPatientId(
 			@PathParam("patient_id") String patient_id) throws ApiException {
-		List<Cases> caseList = new ArrayList<Cases>();
-		for (int j = 0; j < 3; j++) {
-			Cases caseinfo = new Cases();
-			caseinfo.setCaseId("13000005678"+j);
-			caseinfo.setPatId("13000005678");
-			caseinfo.setPatReport("最近白带增多，有异味");;
-			caseinfo.setMedicalexamination("picture  url");
-			caseinfo.setDocSuggestion("建议到医院复查一下");
-			caseList.add(caseinfo);
-		}
-		return caseList;
+		return patLogic.getCasesList(patient_id);
 	};
 
 }

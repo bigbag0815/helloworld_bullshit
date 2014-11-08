@@ -79,7 +79,7 @@ public class DocController {
 				caseinfo.setCaseId("13000005678case"+i);
 				caseinfo.setPatId("13000005678");
 				caseinfo.setPatReport("最近白带增多，有异味");;
-				caseinfo.setMedicalexamination("picture  url");
+				caseinfo.setPatPicUrl1("picture  url");
 				caseinfo.setDocSuggestion("建议到医院复查一下");
 				caseList.add(caseinfo);
 			}

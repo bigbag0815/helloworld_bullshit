@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bullshit.endpoint.dao.CasesExtMapper" >
+  <resultMap id="BaseResultMap" type="com.bullshit.endpoint.entity.Cases" >
+    <id column="case_id" property="caseId" jdbcType="VARCHAR" />
+    <result column="pat_id" property="patId" jdbcType="VARCHAR" />
+    <result column="isactive" property="isactive" jdbcType="VARCHAR" />
+    <result column="pat_report" property="patReport" jdbcType="VARCHAR" />
+    <result column="pat_pic_url_1" property="patPicUrl1" jdbcType="VARCHAR" />
+    <result column="pat_pic_url_2" property="patPicUrl2" jdbcType="VARCHAR" />
+    <result column="pat_pic_url_3" property="patPicUrl3" jdbcType="VARCHAR" />
+    <result column="doc_suggestion" property="docSuggestion" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="mtime" property="mtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByPatId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select case_id, pat_id, isactive, pat_report, pat_pic_url_1, pat_pic_url_2, pat_pic_url_3, doc_suggestion, ctime, mtime
+    from pat_case
+    where pat_id = #{patId,jdbcType=VARCHAR}
+  </select>
+</mapper>
