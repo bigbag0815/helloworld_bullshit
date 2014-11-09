@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
-public class DocReq extends BaseReq {
+public class AccessUpdateDocReq extends AccessUpdateBaseReq {
 	private String docTitle;
 	private String docProfessional;
 	private String docDepartmentName;

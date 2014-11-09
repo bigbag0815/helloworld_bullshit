@@ -11,5 +11,5 @@ public interface DepartmentExtMapper {
      *
      * @mbggenerated
      */
-    List<Department> selectByName();
+    List<Department> selectByName(Department department);
 }

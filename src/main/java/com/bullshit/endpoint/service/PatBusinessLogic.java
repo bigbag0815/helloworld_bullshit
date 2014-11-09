@@ -14,16 +14,17 @@ import com.bullshit.endpoint.entity.Department;
 public class PatBusinessLogic{
 
 	@Autowired
-	CasesExtMapper casesExtMapper;
+	private CasesExtMapper casesExtMapper;
 	
 	@Autowired
-	DepartmentExtMapper departmentExtMapper;
+	private DepartmentExtMapper departmentExtMapper;
 	
-	public List<Cases> getCasesList(String patId) {
+	public List<Cases> getCasesList(String patId) throws Exception {
 		return casesExtMapper.selectByPatId(patId);
 	}
 	
-	public List<Department> getDepartmentList() {
-		return departmentExtMapper.selectByName();
+	public List<Department> getDepartmentList(Department department) throws Exception {
+		return departmentExtMapper.selectByName(department);
 	}
+
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bullshit.endpoint.dao.AccountExtMapper" >
+  <resultMap id="BaseResultMap" type="com.bullshit.endpoint.entity.Account" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="pw" property="pw" jdbcType="VARCHAR" />
+    <result column="roleflg" property="roleflg" jdbcType="VARCHAR" />
+    <result column="isactive" property="isactive" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="imageurl" property="imageurl" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="mobile_phone" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="tel_phone" property="telPhone" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="mtime" property="mtime" jdbcType="TIMESTAMP" />
+    <result column="doc_title" property="docTitle" jdbcType="VARCHAR" />
+    <result column="doc_professional" property="docProfessional" jdbcType="VARCHAR" />
+    <result column="doc_description" property="docDescription" jdbcType="VARCHAR" />
+    <result column="doc_hospital" property="docHospital" jdbcType="VARCHAR" />
+    <result column="doc_department_name" property="docDepartmentName" jdbcType="VARCHAR" />
+    <result column="pat_past_history" property="patPastHistory" jdbcType="VARCHAR" />
+    <result column="pat_allergy_drug" property="patAllergyDrug" jdbcType="VARCHAR" />
+    <result column="pat_emerg_person" property="patEmergPerson" jdbcType="VARCHAR" />
+    <result column="pat_emerg_phone" property="patEmergPhone" jdbcType="VARCHAR" />
+    <result column="pat_status_flg" property="patStatusFlg" jdbcType="VARCHAR" />
+    <result column="hxusername" property="hxusername" jdbcType="VARCHAR" />
+    <result column="hxpassword" property="hxpassword" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectRelationPatInfo" resultMap="BaseResultMap" parameterType="com.bullshit.endpoint.entity.AccountKey" >
+    select a.* from account a
+	inner join doc_pat_relation d
+	on d.pat_id = a.id
+	and d.relation_status = 'ok'
+	and d.doc_id = #{docId,jdbcType=VARCHAR}
+	where  a.pat_status_flg = #{patStatus,jdbcType=VARCHAR}
+	and a.roleflg = 'pat'
+	order by d.mtime desc
+	limit #{limit,jdbcType=INTEGER}
+	offset #{offset,jdbcType=INTEGER};
+  </select>
+  <select id="selectByAccountKey" resultMap="BaseResultMap"  parameterType="com.bullshit.endpoint.entity.AccountKey">
+    select * from account
+    <if test="docDepartmentName != null" >
+	    where doc_department_name = #{docDepartmentName,jdbcType=VARCHAR}
+	</if>
+	<if test="limit != null" >
+	    limit #{limit,jdbcType=INTEGER}
+	</if>
+	<if test="offset != null" >
+	    offset #{offset,jdbcType=INTEGER}
+	</if>
+  </select>
+</mapper>

@@ -1,6 +1,5 @@
 package com.bullshit.endpoint.v1;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,19 +11,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bullshit.endpoint.entity.Account;
+import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.PatientCaseBean;
-import com.bullshit.endpoint.entity.Cases;
-import com.bullshit.endpoint.entity.Department;
 import com.bullshit.endpoint.entity.Schedule;
+import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
 import com.bullshit.endpoint.exception.ApiException;
+import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.service.DocBusinessLogic;
+import com.bullshit.endpoint.service.DocPatRelationBusinessLogic;
+import com.bullshit.endpoint.service.PatBusinessLogic;
 
 @Component
 @Path("/v1/doc")
@@ -33,64 +35,84 @@ public class DocController {
 
 	@Autowired
 	DocBusinessLogic docLogic;
+	
+	@Autowired
+	PatBusinessLogic patLogic;
+	
+	@Autowired
+	AccessBusinessLogic accessLogic;
+	
+	@Autowired
+	DocPatRelationBusinessLogic docPatRelationBusinessLogic;
 
 	/* ### 获取当前医生管理的病人和病人的病例历史记录 */
 	@GET
-	@Path("/patientlist/{doctor_id}")
+	@Path("/patientlist/{doctor_id}/{pat_status}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<PatientCaseBean> getPatientByDoctID(
-			@PathParam("doctor_id") String doctor_id,
+	public DocPatientCaseVo getPatientByDoctID(
+			@PathParam("doctor_id") String doctorId,
+			@PathParam("pat_status") String patStatus,
 			@DefaultValue("1") @QueryParam("from") int fromNum,
 			@DefaultValue("10") @QueryParam("to") int toNum)
 			throws ApiException {
+		
 		log.debug("===========getPatientByDoctID request params:");
-		log.debug(doctor_id);
+		log.debug("doctor_id: " + doctorId);
+		log.debug("pat_status: " + patStatus);
 		log.debug("from：" + fromNum);
 		log.debug("to：" + toNum);
+		
+		DocPatientCaseVo docPatientCaseVo = new DocPatientCaseVo();
 
-		List<PatientCaseBean> patientList = new ArrayList<PatientCaseBean>();
-		for (int i = 1; i < 3; i++) {
-			PatientCaseBean caseBean = new PatientCaseBean();
-			Account account = new Account();
-			account.setId("13340857899");
-			account.setName("李四");
-			account.setImageurl("http://p0.qhimg.com/dmsmty/70_70_100/t016b4e0227f9b9b042.png");
-			account.setAge("25");
-			
-			/*
-			 * roleflg 1.doc 2.pat
-			 */
-			account.setRoleflg("pat");
-
-			account.setHxusername("Hxusername");
-			account.setHxpassword("Hxpassword");
-			account.setCtime(new Timestamp(System.currentTimeMillis()));
-			account.setMtime(new Timestamp(System.currentTimeMillis()));
-			account.setPatAllergyDrug("青霉素");
-			account.setPatPastHistory("高血压，低血糖");
-			account.setPatEmergPhone("13388889999");
-			/* 患者的相关信息 */
-			caseBean.setAccount(account);
-
-			/* 患者的履历 */
-			List<Cases> caseList = new ArrayList<Cases>();
-			for (int j = 0; j < 3; j++) {
-				Cases caseinfo = new Cases();
-				caseinfo.setCaseId("13000005678case"+i);
-				caseinfo.setPatId("13000005678");
-				caseinfo.setPatReport("最近白带增多，有异味");;
-				caseinfo.setPatPicUrl1("picture  url");
-				caseinfo.setDocSuggestion("建议到医院复查一下");
-				caseList.add(caseinfo);
+		try {
+			if (!accessLogic.isContainUser(doctorId)) {
+				docPatientCaseVo.setRsStatus("ng");
+				docPatientCaseVo.setErrInfo(new ErrInfo("101", "医生用户Id错误，请确认。"));
+				return docPatientCaseVo;
 			}
-			caseBean.setCaseList(caseList);
-			patientList.add(caseBean);
-		}
-		return patientList;
-	};
+			
+			if (fromNum <= 0 || toNum <= 0 || toNum - fromNum < 0) {
+				docPatientCaseVo.setRsStatus("ng");
+				docPatientCaseVo.setErrInfo(new ErrInfo("102", "区间错误"));
+				return docPatientCaseVo;
+			}
 
-	
-	
+			List<PatientCaseBean> PatientCaseList = new ArrayList<PatientCaseBean>();
+			
+			PatientCaseBean PatientCaseBean = null;
+			AccountKey key = new AccountKey();
+			key.setDocId(doctorId);
+			key.setPatStatus(patStatus);
+			key.setOffset(fromNum - 1);
+			key.setLimit(toNum - key.getOffset());
+			
+			List<Account> accountList = accessLogic.getRelationPatInfo(key);
+			for (Account account : accountList) {
+				if (null == account) {
+					docPatientCaseVo.setRsStatus("ng");
+					docPatientCaseVo.setErrInfo(new ErrInfo("103", "患者用户Id错误，请确认。"));
+					return docPatientCaseVo;
+				}
+				
+				// 一个患者的情报
+				PatientCaseBean = new PatientCaseBean();
+				PatientCaseBean.setAccount(account);
+				PatientCaseBean.setCaseList(patLogic.getCasesList(account.getId()));
+				
+				// 把一个患者的情报放入集合中
+				PatientCaseList.add(PatientCaseBean);
+			}
+			
+			docPatientCaseVo.setRsStatus("ok");
+			docPatientCaseVo.setPatientCaseBeanList(PatientCaseList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			docPatientCaseVo.setRsStatus("ng");
+			docPatientCaseVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		
+		return docPatientCaseVo;
+	};
 	
 	@GET
 	@Path("/schedulelist/page/{did}")

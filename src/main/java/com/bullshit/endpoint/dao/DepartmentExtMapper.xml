@@ -9,9 +9,12 @@
     <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
     <result column="mtime" property="mtime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByName" resultMap="BaseResultMap">
+  <select id="selectByName" resultMap="BaseResultMap" parameterType="com.bullshit.endpoint.entity.Department">
     select 
     id, isactive, name, description, ctime, mtime
     from department
+    <if test="name != null" >
+        where name = #{name,jdbcType=VARCHAR}
+    </if>
   </select>
 </mapper>

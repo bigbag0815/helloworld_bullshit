@@ -17,7 +17,7 @@ import com.bullshit.endpoint.entity.DocPatRelation;
 import com.bullshit.endpoint.entity.DocPatRelationKey;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.DocPatRelationReq;
-import com.bullshit.endpoint.entity.vo.DocRatRelationVo;
+import com.bullshit.endpoint.entity.vo.DocPatRelationVo;
 import com.bullshit.endpoint.service.DocPatRelationBusinessLogic;
 import com.bullshit.endpoint.utils.DateUtil;
 
@@ -33,17 +33,18 @@ public class DocPatRelationController {
 	 * 患者提出一个和医生联系的请求
 	 */
 	@POST
-	@Path("/req")
+	@Path("/apply")
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocRatRelationVo reqtRelation(DocPatRelationReq docPatRelationReq) {
+	public DocPatRelationVo applyRelation(DocPatRelationReq docPatRelationReq) {
 		String docId = docPatRelationReq.getDocId();
 		String patId = docPatRelationReq.getPatId();
 		
-		DocRatRelationVo docRatRelationVo = new DocRatRelationVo();
+		DocPatRelationVo docRatRelationVo = new DocPatRelationVo();
 		
 		if (StringUtils.equals(patId, docId)) {
 			docRatRelationVo.setRsStatus("ng");
 			docRatRelationVo.setErrInfo(new ErrInfo("101", "不能添加自己为好友"));
+			return docRatRelationVo;
 		}
 		
 		DocPatRelationKey key = new DocPatRelationKey();
@@ -99,13 +100,13 @@ public class DocPatRelationController {
 	 * 医生响应患者提出的请求
 	 */
 	@POST
-	@Path("/reply")
+	@Path("/accept")
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocRatRelationVo replyRelation(DocPatRelationReq docPatRelationReq) {
+	public DocPatRelationVo acceptRelation(DocPatRelationReq docPatRelationReq) {
 		String docId = docPatRelationReq.getDocId();
 		String patId = docPatRelationReq.getPatId();
 		
-		DocRatRelationVo docRatRelationVo = new DocRatRelationVo();
+		DocPatRelationVo docRatRelationVo = new DocPatRelationVo();
 		
 		DocPatRelationKey key = new DocPatRelationKey();
 		key.setDocId(docId);
@@ -150,13 +151,13 @@ public class DocPatRelationController {
 	 * 患者或者医生主动解除和患者的联系
 	 */
 	@POST
-	@Path("/release")
+	@Path("/refuse")
 	@Produces(MediaType.APPLICATION_JSON)
-	public DocRatRelationVo releaseRelation(DocPatRelationReq docPatRelationReq) {
+	public DocPatRelationVo refuseRelation(DocPatRelationReq docPatRelationReq) {
 		String docId = docPatRelationReq.getDocId();
 		String patId = docPatRelationReq.getPatId();
 		
-		DocRatRelationVo docRatRelationVo = new DocRatRelationVo();
+		DocPatRelationVo docRatRelationVo = new DocPatRelationVo();
 		
 		DocPatRelationKey key = new DocPatRelationKey();
 		key.setDocId(docId);

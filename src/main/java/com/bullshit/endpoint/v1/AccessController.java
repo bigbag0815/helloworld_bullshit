@@ -16,8 +16,8 @@ import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.AccessReq;
 import com.bullshit.endpoint.entity.vo.AccessVo;
-import com.bullshit.endpoint.entity.vo.DocReq;
-import com.bullshit.endpoint.entity.vo.PatReq;
+import com.bullshit.endpoint.entity.vo.AccessUpdateDocReq;
+import com.bullshit.endpoint.entity.vo.AccessUpdatePatReq;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
@@ -59,6 +59,9 @@ public class AccessController {
 					dataNode.put("username", hxusername);
 					dataNode.put("password", hxpassword);
 					ObjectNode resNode02 = EasemobIMUsers.createNewIMUserSingle(dataNode);
+					
+					// TODO
+					// 写法可以改良
 					
 					Account account = new Account();
 					//hx账号创建成功，将hxusername和hxpassword写入DB
@@ -130,6 +133,10 @@ public class AccessController {
 			if (null != account) {
 				if (Text2Md5.getMD5Text(password).equals(account.getPw())) {
 					
+					// TODO
+					// if (StringUtils.isBlank(account.getHxusername()))
+					// 这个是首次登陆时要往huanxin上登陆数据用吗？
+					
 					if (account.getHxusername() == null) {
 						String hxusername = Text2Md5.getMD5Text(username);
 						String hxpassword = Text2Md5.getMD5Text(password);
@@ -168,7 +175,7 @@ public class AccessController {
 	@POST
 	@Path("/update/docinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public AccessVo updateDocAccountInfo(DocReq docReq) throws Exception {
+	public AccessVo updateDocAccountInfo(AccessUpdateDocReq docReq) throws Exception {
 		System.out.println("update_docinfo");
 		AccessVo accessVo = new AccessVo();
 		try {
@@ -192,14 +199,19 @@ public class AccessController {
 								.getAccountInfo(docReq.getId());
 						accessVo.setAccountInfo(acc);
 						accessVo.setRsStatus("ok");
+					}else {
+						accessVo.setRsStatus("ng");
+						accessVo.setErrInfo(new ErrInfo("301", "该用户信息更新失败"));
 					}
 				} else {
 					accessVo.setRsStatus("ng");
-					accessVo.setErrInfo(new ErrInfo("301", "该用户不存在"));
+					accessVo.setErrInfo(new ErrInfo("302", "该用户不存在"));
 				}
 			} else {
+				// TODO
+				// 这个判断应该在取得用户信息以后再判断比较好吧
 				accessVo.setRsStatus("ng");
-				accessVo.setErrInfo(new ErrInfo("302", "该用户不是医生"));
+				accessVo.setErrInfo(new ErrInfo("303", "该用户不是医生"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -215,7 +227,7 @@ public class AccessController {
 	@POST
 	@Path("/update/patinfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public AccessVo updatePatAccountInfo(PatReq patReq) throws Exception {
+	public AccessVo updatePatAccountInfo(AccessUpdatePatReq patReq) throws Exception {
 		AccessVo accessVo = new AccessVo();
 		try {
 			if ("pat".equals(patReq.getRoleflg())) {

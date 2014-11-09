@@ -1,22 +1,13 @@
-/**
- * 
- */
 package com.bullshit.endpoint.entity;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- *
- *
- *@author  uu
- *@createtime 2014-11-2
- *@vision:V1.0
- **/
 public class PatientCaseBean implements Serializable {
-	
+	private static final long serialVersionUID = 1L;
+
 	private Account account;
-	
+
 	private List<Cases> caseList;
 
 	/**
@@ -34,7 +25,8 @@ public class PatientCaseBean implements Serializable {
 	}
 
 	/**
-	 * @param account the account to set
+	 * @param account
+	 *            the account to set
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
@@ -48,7 +40,8 @@ public class PatientCaseBean implements Serializable {
 	}
 
 	/**
-	 * @param caseList the caseList to set
+	 * @param caseList
+	 *            the caseList to set
 	 */
 	public void setCaseList(List<Cases> caseList) {
 		this.caseList = caseList;

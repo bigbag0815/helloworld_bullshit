@@ -3,7 +3,7 @@ package com.bullshit.endpoint.entity.vo;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class PatReq extends BaseReq {
+public class AccessUpdatePatReq extends AccessUpdateBaseReq {
 	private String patAllergyDrug;
 	private String patEmergPerson;
 	private String patEmergPhone;
