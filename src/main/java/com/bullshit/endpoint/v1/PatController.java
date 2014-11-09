@@ -1,10 +1,7 @@
 package com.bullshit.endpoint.v1;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -12,8 +9,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.media.multipart.BodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,20 +101,6 @@ public class PatController {
 		}
 
 		return PatAccountVo;
-	};
-	
-	/* 病人填写病例 */
-	@POST
-	@Path("/cases/upload")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String insertPatientCase(@FormParam("user_id") String user_id,
-			@FormParam("message") String message, FormDataMultiPart multiPart)
-			throws ApiException {
-		for (BodyPart bodyPart : multiPart.getBodyParts()) {
-			System.out.println(bodyPart.getEntityAs(String.class));
-		}
-		return null;
 	};
 
 	/* ### 通过病人id获取病例 */

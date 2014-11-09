@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bullshit.endpoint.dao.DocSurgeryPlanExtMapper;
 import com.bullshit.endpoint.dao.ScheduleMapper;
+import com.bullshit.endpoint.entity.DocSurgeryPlan;
+import com.bullshit.endpoint.entity.DocSurgeryPlanKey;
 import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.exception.ApiException;
 
@@ -14,6 +17,9 @@ public class DocBusinessLogic{
 	
 	@Autowired
 	private ScheduleMapper scheduleMapper;
+	
+	@Autowired
+	DocSurgeryPlanExtMapper docSurgeryPlanExtMapper;
 
 	public List<Schedule> scheduleList(int doc_id) throws ApiException {
 		List<Schedule> schedulelist=scheduleMapper.getScheduleListById(doc_id);
@@ -35,6 +41,10 @@ public class DocBusinessLogic{
 				throw e;
 			}
 		}
+	}
+	
+	public List<DocSurgeryPlan> getSurgeryPlanByDocId(DocSurgeryPlanKey key) throws Exception{
+		return docSurgeryPlanExtMapper.selectByDocId(key);
 	}
 
 }

@@ -41,9 +41,11 @@
   </select>
   <select id="selectByAccountKey" resultMap="BaseResultMap"  parameterType="com.bullshit.endpoint.entity.AccountKey">
     select * from account
+    where roleflg = 'doc'
     <if test="docDepartmentName != null" >
-	    where doc_department_name = #{docDepartmentName,jdbcType=VARCHAR}
+	    and doc_department_name = #{docDepartmentName,jdbcType=VARCHAR}
 	</if>
+	order by id
 	<if test="limit != null" >
 	    limit #{limit,jdbcType=INTEGER}
 	</if>

@@ -18,10 +18,12 @@ import org.springframework.stereotype.Component;
 
 import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.DocSurgeryPlanKey;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.PatientCaseBean;
 import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
+import com.bullshit.endpoint.entity.vo.DocSurgeryPlanVo;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.service.DocBusinessLogic;
@@ -112,6 +114,46 @@ public class DocController {
 		}
 		
 		return docPatientCaseVo;
+	};
+	
+	/* ### 查找医生手术计划 */
+	@GET
+	@Path("/planlist/{doctor_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public DocSurgeryPlanVo getSurgeryPlan(
+			@PathParam("doctor_id") String docId,
+			@DefaultValue("1") @QueryParam("from") int fromNum,
+			@DefaultValue("3") @QueryParam("to") int toNum)
+			throws ApiException {
+		
+		DocSurgeryPlanVo docSurgeryPlanVo = new DocSurgeryPlanVo();
+		
+		if (fromNum <= 0 || toNum <= 0 || toNum - fromNum < 0) {
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("101", "区间错误"));
+			return docSurgeryPlanVo;
+		}
+		
+		try {
+			if (accessLogic.isContainUser(docId)) {
+				docSurgeryPlanVo.setRsStatus("ng");
+				docSurgeryPlanVo.setErrInfo(new ErrInfo("102", "医生ID输入有误。"));
+				return docSurgeryPlanVo;
+			}
+			DocSurgeryPlanKey key = new DocSurgeryPlanKey();
+			key.setDocId(docId);
+			key.setOffset(fromNum - 1);
+			key.setLimit(toNum - key.getOffset());
+			
+			docSurgeryPlanVo.setRsStatus("ok");
+			docSurgeryPlanVo.setDocSurgeryPlanList(docLogic.getSurgeryPlanByDocId(key));
+		} catch (Exception e) {
+			e.printStackTrace();
+			docSurgeryPlanVo.setRsStatus("ng");
+			docSurgeryPlanVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+
+		return docSurgeryPlanVo;
 	};
 	
 	@GET
