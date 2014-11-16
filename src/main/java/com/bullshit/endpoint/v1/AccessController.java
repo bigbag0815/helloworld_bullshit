@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,9 +180,9 @@ public class AccessController {
 		System.out.println("update_docinfo");
 		AccessVo accessVo = new AccessVo();
 		try {
-			if ("doc".equals(docReq.getRoleflg())) {
-				Account account = accessLogic.getAccountInfo(docReq.getId());
-				if (null != account) {
+			Account account = accessLogic.getAccountInfo(docReq.getId());
+			if (null != account) {
+				if (StringUtils.equals(account.getRoleflg(), docReq.getRoleflg())) {
 					account.setName(docReq.getName());
 					account.setAge(docReq.getAge());
 					account.setSex(docReq.getSex());
@@ -189,7 +190,7 @@ public class AccessController {
 					account.setMobilePhone(docReq.getMobilePhone());
 					account.setTelPhone(docReq.getTelPhone());
 					account.setDocTitle(docReq.getDocTitle());
-					account.setDocProfessional(docReq.getDocHospital());
+					account.setDocProfessional(docReq.getDocProfessional());
 					account.setDocDepartmentName(docReq.getDocDepartmentName());
 					account.setDocDescription(docReq.getDocDescription());
 					account.setDocHospital(docReq.getDocHospital());
@@ -205,13 +206,11 @@ public class AccessController {
 					}
 				} else {
 					accessVo.setRsStatus("ng");
-					accessVo.setErrInfo(new ErrInfo("302", "该用户不存在"));
+					accessVo.setErrInfo(new ErrInfo("302", "该用户不是医生"));
 				}
 			} else {
-				// TODO
-				// 这个判断应该在取得用户信息以后再判断比较好吧
 				accessVo.setRsStatus("ng");
-				accessVo.setErrInfo(new ErrInfo("303", "该用户不是医生"));
+				accessVo.setErrInfo(new ErrInfo("303", "该用户不存在"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -230,9 +229,9 @@ public class AccessController {
 	public AccessVo updatePatAccountInfo(AccessUpdatePatReq patReq) throws Exception {
 		AccessVo accessVo = new AccessVo();
 		try {
-			if ("pat".equals(patReq.getRoleflg())) {
-				Account account = accessLogic.getAccountInfo(patReq.getId());
-				if (null != account) {
+			Account account = accessLogic.getAccountInfo(patReq.getId());
+			if (null != account) {
+				if (StringUtils.equals(account.getRoleflg(), patReq.getRoleflg())) {
 					account.setId(patReq.getId());
 					account.setName(patReq.getName());
 					account.setAge(patReq.getAge());
@@ -254,11 +253,11 @@ public class AccessController {
 					}
 				} else {
 					accessVo.setRsStatus("ng");
-					accessVo.setErrInfo(new ErrInfo("401", "该用户不存在"));
+					accessVo.setErrInfo(new ErrInfo("401", "该用户不是患者"));
 				}
 			} else {
 				accessVo.setRsStatus("ng");
-				accessVo.setErrInfo(new ErrInfo("402", "该用户不是患者"));
+				accessVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

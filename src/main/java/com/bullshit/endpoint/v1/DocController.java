@@ -20,6 +20,7 @@ import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
 import com.bullshit.endpoint.entity.DocSurgeryPlanKey;
 import com.bullshit.endpoint.entity.ErrInfo;
+import com.bullshit.endpoint.entity.HXAccount;
 import com.bullshit.endpoint.entity.PatientCaseBean;
 import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
@@ -88,8 +89,8 @@ public class DocController {
 			key.setOffset(fromNum - 1);
 			key.setLimit(toNum - key.getOffset());
 			
-			List<Account> accountList = accessLogic.getRelationPatInfo(key);
-			for (Account account : accountList) {
+			List<HXAccount> accountList = accessLogic.getRelationPatInfo(key);
+			for (HXAccount account : accountList) {
 				if (null == account) {
 					docPatientCaseVo.setRsStatus("ng");
 					docPatientCaseVo.setErrInfo(new ErrInfo("103", "患者用户Id错误，请确认。"));

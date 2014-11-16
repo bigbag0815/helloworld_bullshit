@@ -11,7 +11,7 @@
   </resultMap>
   <select id="selectRelationPatInfoByDocId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    doc_id, pat_id, isactive, relation_status, ctime, mtime
+    doc_id, pat_id, isactive, relation_status, hx_chat_group_id, ctime, mtime
     from doc_pat_relation
     where doc_id = #{docId,jdbcType=VARCHAR}
     and relation_status = 'ok'

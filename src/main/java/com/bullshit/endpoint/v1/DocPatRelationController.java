@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.DocPatRelation;
 import com.bullshit.endpoint.entity.DocPatRelationKey;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.DocPatRelationReq;
 import com.bullshit.endpoint.entity.vo.DocPatRelationVo;
+import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.service.DocPatRelationBusinessLogic;
 import com.bullshit.endpoint.utils.DateUtil;
 
@@ -29,6 +31,8 @@ public class DocPatRelationController {
 	@Autowired
 	DocPatRelationBusinessLogic docPatRelationBusinessLogic;
 	
+	@Autowired
+	AccessBusinessLogic accessLogic;
 	/**
 	 * 患者提出一个和医生联系的请求
 	 */
@@ -105,20 +109,29 @@ public class DocPatRelationController {
 	public DocPatRelationVo acceptRelation(DocPatRelationReq docPatRelationReq) {
 		String docId = docPatRelationReq.getDocId();
 		String patId = docPatRelationReq.getPatId();
+		String hxChatGroupId = docPatRelationReq.getHxChatGroupId();
 		
 		DocPatRelationVo docRatRelationVo = new DocPatRelationVo();
 		
-		DocPatRelationKey key = new DocPatRelationKey();
-		key.setDocId(docId);
-		key.setPatId(patId);
-		
-		DocPatRelation docPatRelationData = new DocPatRelation();
-		docPatRelationData.setDocId(docId);
-		docPatRelationData.setPatId(patId);
-		docPatRelationData.setRelationStatus("ok");
-		docPatRelationData.setMtime(DateUtil.getCurrentDate());
-		
 		try {
+			log.debug(patId);
+			Account account = accessLogic.getAccountInfoByHX(patId);
+			if (null != account) {
+				patId = account.getId();
+				log.debug(patId);
+			}
+		
+			DocPatRelationKey key = new DocPatRelationKey();
+			key.setDocId(docId);
+			key.setPatId(patId);
+			
+			DocPatRelation docPatRelationData = new DocPatRelation();
+			docPatRelationData.setDocId(docId);
+			docPatRelationData.setPatId(patId);
+			docPatRelationData.setRelationStatus("ok");
+			docPatRelationData.setHxChatGroupId(hxChatGroupId);
+			docPatRelationData.setMtime(DateUtil.getCurrentDate());
+			
 			DocPatRelation docPatRelationResults = docPatRelationBusinessLogic.getDocPatRelation(key);
 			if (null == docPatRelationResults) {
 				docRatRelationVo.setRsStatus("ng");
@@ -168,6 +181,7 @@ public class DocPatRelationController {
 		docPatRelationData.setPatId(patId);
 		docPatRelationData.setIsactive("active");
 		docPatRelationData.setRelationStatus("ng");
+		docPatRelationData.setHxChatGroupId("");
 		docPatRelationData.setMtime(DateUtil.getCurrentDate());
 		
 		try {

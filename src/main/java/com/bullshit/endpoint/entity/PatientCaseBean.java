@@ -6,7 +6,7 @@ import java.util.List;
 public class PatientCaseBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Account account;
+	private HXAccount account;
 
 	private List<Cases> caseList;
 
@@ -20,7 +20,7 @@ public class PatientCaseBean implements Serializable {
 	/**
 	 * @return the account
 	 */
-	public Account getAccount() {
+	public HXAccount getAccount() {
 		return this.account;
 	}
 
@@ -28,7 +28,7 @@ public class PatientCaseBean implements Serializable {
 	 * @param account
 	 *            the account to set
 	 */
-	public void setAccount(Account account) {
+	public void setAccount(HXAccount account) {
 		this.account = account;
 	}
 

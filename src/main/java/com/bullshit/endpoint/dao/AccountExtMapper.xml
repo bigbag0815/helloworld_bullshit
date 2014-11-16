@@ -27,8 +27,40 @@
     <result column="hxusername" property="hxusername" jdbcType="VARCHAR" />
     <result column="hxpassword" property="hxpassword" jdbcType="VARCHAR" />
   </resultMap>
-  <select id="selectRelationPatInfo" resultMap="BaseResultMap" parameterType="com.bullshit.endpoint.entity.AccountKey" >
-    select a.* from account a
+  <resultMap id="HXResultMap" type="com.bullshit.endpoint.entity.HXAccount" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="pw" property="pw" jdbcType="VARCHAR" />
+    <result column="roleflg" property="roleflg" jdbcType="VARCHAR" />
+    <result column="isactive" property="isactive" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="imageurl" property="imageurl" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="mobile_phone" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="tel_phone" property="telPhone" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="mtime" property="mtime" jdbcType="TIMESTAMP" />
+    <result column="doc_title" property="docTitle" jdbcType="VARCHAR" />
+    <result column="doc_professional" property="docProfessional" jdbcType="VARCHAR" />
+    <result column="doc_description" property="docDescription" jdbcType="VARCHAR" />
+    <result column="doc_hospital" property="docHospital" jdbcType="VARCHAR" />
+    <result column="doc_department_name" property="docDepartmentName" jdbcType="VARCHAR" />
+    <result column="pat_past_history" property="patPastHistory" jdbcType="VARCHAR" />
+    <result column="pat_allergy_drug" property="patAllergyDrug" jdbcType="VARCHAR" />
+    <result column="pat_emerg_person" property="patEmergPerson" jdbcType="VARCHAR" />
+    <result column="pat_emerg_phone" property="patEmergPhone" jdbcType="VARCHAR" />
+    <result column="pat_status_flg" property="patStatusFlg" jdbcType="VARCHAR" />
+    <result column="hxusername" property="hxusername" jdbcType="VARCHAR" />
+    <result column="hxpassword" property="hxpassword" jdbcType="VARCHAR" />
+    <result column="hx_chat_group_id" property="hxChatGroupId" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectRelationPatInfo" resultMap="HXResultMap" parameterType="com.bullshit.endpoint.entity.AccountKey" >
+    select 
+    a.id, a.pw, a.roleflg, a.isactive, a.name, a.imageurl, a.age, a.sex, a.mobile_phone, a.tel_phone, a.ctime, 
+    a.mtime, a.doc_title, a.doc_professional, a.doc_description, a.doc_hospital, a.doc_department_name, 
+    a.pat_past_history, a.pat_allergy_drug, a.pat_emerg_person, a.pat_emerg_phone, a.pat_status_flg, 
+    a.hxusername, a.hxpassword, d.hx_chat_group_id
+    from account a
 	inner join doc_pat_relation d
 	on d.pat_id = a.id
 	and d.relation_status = 'ok'
@@ -52,5 +84,9 @@
 	<if test="offset != null" >
 	    offset #{offset,jdbcType=INTEGER}
 	</if>
+  </select>
+  <select id="selectByHxId" resultMap="BaseResultMap"  parameterType="java.lang.String">
+    select * from account
+    where hxusername = #{hxId,jdbcType=VARCHAR}
   </select>
 </mapper>

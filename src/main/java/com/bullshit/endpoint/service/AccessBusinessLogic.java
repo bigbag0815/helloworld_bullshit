@@ -9,6 +9,7 @@ import com.bullshit.endpoint.dao.AccountExtMapper;
 import com.bullshit.endpoint.dao.AccountMapper;
 import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.HXAccount;
 
 @Service("accessLogic")
 public class AccessBusinessLogic {
@@ -32,12 +33,16 @@ public class AccessBusinessLogic {
 	public Account getAccountInfo(String id) throws Exception {
 		return accountMapper.selectByPrimaryKey(id);
 	}
+	
+	public Account getAccountInfoByHX(String hxId) throws Exception {
+		return accountExtMapper.selectByHxId(hxId);
+	}
 
 	public int updateAccount(Account account) throws Exception {
 		return accountMapper.updateByPrimaryKeySelective(account);
 	}
 
-	public List<Account> getRelationPatInfo(AccountKey key) throws Exception {
+	public List<HXAccount> getRelationPatInfo(AccountKey key) throws Exception {
 		return accountExtMapper.selectRelationPatInfo(key);
 	}
 	
