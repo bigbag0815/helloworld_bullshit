@@ -1,6 +1,32 @@
 http://182.92.239.215:8080/bullshit/rest/application.wadl
 http://localhost:8080/bullshit/rest/application.wadl
 
+
+医生更新病人的状态（门诊，病房，随访）
+-------------------------------------------------
+/bullshit/rest/v1/acc/update/patStatus
+{
+"id":"18800002222",
+"patStatusFlg":"门诊",
+"roleflg":"pat"
+}
+
+医生更新病人的状态（门诊，病房，随访）
+-------------------------------------------------
+/bullshit/rest/v1/acc/getUserName/{hxid}
+http://182.92.239.215:8080/bullshit/rest/v1/acc/getUserName/5da59fa23121b2a6
+
+
+
+获得七牛UpToken
+-------------------------------------------------
+http://182.92.239.215:8080/bullshit_insert_picture/rest/v1/qiniu/getuptoken
+
+
+
+
+
+
 测试数据doc注册号码开头:199
 测试数据pat注册号码开头:200
 -------------------Access-------------------
@@ -79,10 +105,12 @@ http://localhost:8080/bullshit/rest/application.wadl
 //患者状态（门诊、病房、随诊）"patStatusFlg":"随诊",
 
 
+http://localhost:8080/bullshit/rest/v1/acc/getUserName/5da59fa23121b2a6
+
 
 -------------------Doc 查看患者病例-------------------
 注：医生只能查看与自己建立关系的患者病例
-http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/19900100002/随诊?from=1&to=10
+http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/随访?from=1&to=10
 
 http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/20000100001/patStatusFlg?from=1&to=2
 
@@ -116,7 +144,8 @@ http://182.92.239.215:8080/bullshit/rest/v1/rel/apply
 http://182.92.239.215:8080/bullshit/rest/v1/rel/accept 
 {
 "docId":"19900100002",
-"patId":"20000100001"
+"patId":"b592dcdaca0d0be7",
+"hxChatGroupId":"123123123123123"
 }
 解除关系
 http://182.92.239.215:8080/bullshit/rest/v1/rel/refuse 

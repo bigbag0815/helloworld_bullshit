@@ -2,9 +2,13 @@ package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
 
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +23,9 @@ import com.bullshit.endpoint.entity.vo.AccessReq;
 import com.bullshit.endpoint.entity.vo.AccessVo;
 import com.bullshit.endpoint.entity.vo.AccessUpdateDocReq;
 import com.bullshit.endpoint.entity.vo.AccessUpdatePatReq;
+import com.bullshit.endpoint.entity.vo.AccexxUserNameVo;
+import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
+import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
 import com.easemob.server.example.jersey.apidemo.EasemobIMUsers;
@@ -266,5 +273,78 @@ public class AccessController {
 		}
 		return accessVo;
 	}
+	
 
+	/* ### 通过HXID取得UserName */
+	@GET
+	@Path("/getUserName/{hxid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public AccexxUserNameVo getUserNameByHXId(
+			@PathParam("hxid") String hxId)
+			throws ApiException {
+		AccexxUserNameVo accexxUserNameVo = new AccexxUserNameVo();
+		
+		try {
+			Account account = accessLogic.getAccountInfoByHX(hxId);
+			
+			if (null != account) {
+				accexxUserNameVo.setRsStatus("ok");
+				accexxUserNameVo.setUserName(account.getName());
+			} else {
+				accexxUserNameVo.setRsStatus("ng");
+				accexxUserNameVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accexxUserNameVo.setRsStatus("ng");
+			accexxUserNameVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		return accexxUserNameVo;
+	}
+
+
+	/**
+	 *  医生更新PatStatus
+	 * **/
+	@POST
+	@Path("/update/patStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public AccessVo updatePatStatus(AccessUpdatePatReq patReq) throws Exception {
+		
+
+		log.debug("id：" + patReq.getId());
+		log.debug("roleFlg：" + patReq.getRoleflg());
+		log.debug("patStatus：" + patReq.getPatStatusFlg());
+		
+		
+		AccessVo accessVo = new AccessVo();
+		try {
+			Account account = accessLogic.getAccountInfo(patReq.getId());
+			
+			if (null != account) {
+				if (StringUtils.equals(account.getRoleflg(), patReq.getRoleflg())) {
+					account.setId(patReq.getId());
+					account.setPatStatusFlg(patReq.getPatStatusFlg());
+					account.setMtime(new Timestamp(System.currentTimeMillis()));
+					if (accessLogic.updateAccount(account) > 0) {
+						Account acc = accessLogic
+								.getAccountInfo(patReq.getId());
+						accessVo.setAccountInfo(acc);
+						accessVo.setRsStatus("ok");
+					}
+				} else {
+					accessVo.setRsStatus("ng");
+					accessVo.setErrInfo(new ErrInfo("401", "该用户不是患者"));
+				}
+			} else {
+				accessVo.setRsStatus("ng");
+				accessVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accessVo.setRsStatus("ng");
+			accessVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		return accessVo;
+	}
 }
