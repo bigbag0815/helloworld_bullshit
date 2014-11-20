@@ -18,9 +18,33 @@ http://182.92.239.215:8080/bullshit/rest/v1/acc/getUserName/5da59fa23121b2a6
 
 
 
+
 获得七牛UpToken
 -------------------------------------------------
 http://182.92.239.215:8080/bullshit_insert_picture/rest/v1/qiniu/getuptoken
+
+将上传到七牛的图片名称，病例描述等信息更新到DB
+---------------------------------------------------------------------------------------
+http://182.92.239.215:8080/bullshit_insert_picture/rest/v1/qiniu/pat/cases/uploads
+{
+"patId":"20000100001",
+"description":"description_test",
+"patPicUrl1":"patPicUrl1_test",
+"patPicUrl2":"patPicUrl2_test",
+"patPicUrl3":"patPicUrl3_test"
+}
+
+
+-------------------Doc 查看患者病例-------------------
+注：医生只能查看与自己建立关系的患者病例（医生获得所有与他是好友关系的病人信息及所有病人的病例信息）
+http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/门诊?from=1&to=10
+http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/patStatusFlg?from=1&to=2
+
+
+
+--------------------病人Pat 取得自己病例-------------------------------
+http://182.92.239.215:8080/bullshit/rest/v1/pat/caseinfo/20000100001
+
 
 
 
@@ -110,9 +134,9 @@ http://localhost:8080/bullshit/rest/v1/acc/getUserName/5da59fa23121b2a6
 
 -------------------Doc 查看患者病例-------------------
 注：医生只能查看与自己建立关系的患者病例
-http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/随访?from=1&to=10
+http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/门诊?from=1&to=10
 
-http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/20000100001/patStatusFlg?from=1&to=2
+http://182.92.239.215:8080/bullshit/rest/v1/doc/patientlist/18310458257/patStatusFlg?from=1&to=2
 
 
 -------------------Pat 取得医生信息-------------------
