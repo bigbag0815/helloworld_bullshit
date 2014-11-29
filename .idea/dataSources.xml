@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="822240560">
+    <data-source source="LOCAL" name="MySQL - bullshitdb@outbullshit.mysql.rds.aliyuncs.com" uuid="325272e1-9010-4d89-be48-e799995d7eda">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://outbullshit.mysql.rds.aliyuncs.com:3306/bullshitdb</jdbc-url>
+      <user-name>dbuser</user-name>
+      <user-password>df9bdf98df99df9bdf98df99dfdbdfdddfcf</user-password>
+      <driver-properties>
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+      </driver-properties>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+
