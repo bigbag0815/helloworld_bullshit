@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
 import com.bullshit.endpoint.entity.DocSurgeryPlanKey;
 import com.bullshit.endpoint.entity.ErrInfo;

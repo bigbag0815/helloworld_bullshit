@@ -2,13 +2,11 @@ package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +22,6 @@ import com.bullshit.endpoint.entity.vo.AccessVo;
 import com.bullshit.endpoint.entity.vo.AccessUpdateDocReq;
 import com.bullshit.endpoint.entity.vo.AccessUpdatePatReq;
 import com.bullshit.endpoint.entity.vo.AccexxUserNameVo;
-import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.utils.Text2Md5;
@@ -290,6 +287,20 @@ public class AccessController {
 			if (null != account) {
 				accexxUserNameVo.setRsStatus("ok");
 				accexxUserNameVo.setUserName(account.getName());
+				
+				accexxUserNameVo.setImageurl(account.getImageurl());
+				accexxUserNameVo.setRoleflg(account.getRoleflg());
+				accexxUserNameVo.setAge(account.getAge());
+				accexxUserNameVo.setSex(account.getSex());
+				accexxUserNameVo.setDocTitle(account.getDocTitle());
+				accexxUserNameVo.setDocProfessional(account.getDocProfessional());
+				accexxUserNameVo.setDocDescription(account.getDocDescription());
+				accexxUserNameVo.setDocHospital(account.getDocHospital());
+				accexxUserNameVo.setDocDepartmentName(account.getDocDepartmentName());
+				accexxUserNameVo.setPatPastHistory(account.getPatPastHistory());
+				accexxUserNameVo.setPatAllergyDrug(account.getPatAllergyDrug());
+				accexxUserNameVo.setPatStatusFlg(account.getPatStatusFlg());
+				
 			} else {
 				accexxUserNameVo.setRsStatus("ng");
 				accexxUserNameVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
