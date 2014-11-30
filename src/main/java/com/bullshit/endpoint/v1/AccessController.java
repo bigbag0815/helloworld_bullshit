@@ -299,7 +299,7 @@ public class AccessController {
 				accexxUserNameVo.setPatPastHistory(account.getPatPastHistory());
 				accexxUserNameVo.setPatAllergyDrug(account.getPatAllergyDrug());
 				accexxUserNameVo.setPatStatusFlg(account.getPatStatusFlg());
-				
+
 			} else {
 				accexxUserNameVo.setRsStatus("ng");
 				accexxUserNameVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
