@@ -2,14 +2,12 @@ package com.bullshit.endpoint.v1;
 
 import java.sql.Timestamp;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+//import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.server.JSONP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
 @Path("/v1/acc")
+@Produces({"application/x-javascript", "application/json", "application/xml"})
 public class AccessController {
 	Logger log = LoggerFactory.getLogger(AccessController.class);
 
@@ -300,7 +299,49 @@ public class AccessController {
 				accexxUserNameVo.setPatPastHistory(account.getPatPastHistory());
 				accexxUserNameVo.setPatAllergyDrug(account.getPatAllergyDrug());
 				accexxUserNameVo.setPatStatusFlg(account.getPatStatusFlg());
-				
+
+			} else {
+				accexxUserNameVo.setRsStatus("ng");
+				accexxUserNameVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			accexxUserNameVo.setRsStatus("ng");
+			accexxUserNameVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		return accexxUserNameVo;
+	}
+
+	/* ### 通过HXID取得User info*/
+    @GET
+    @Path("/getUserInfo/{hxid}")
+    @JSONP(callback = "eval", queryParam = "jsonpCallback")
+    @Produces("application/x-javascript")
+	public AccexxUserNameVo  getUserInfoByHXId(
+			@PathParam("hxid") String hxId)
+			throws ApiException {
+		AccexxUserNameVo accexxUserNameVo = new AccexxUserNameVo();
+
+		try {
+			Account account = accessLogic.getAccountInfoByHX(hxId);
+
+			if (null != account) {
+				accexxUserNameVo.setRsStatus("ok");
+				accexxUserNameVo.setUserName(account.getName());
+
+				accexxUserNameVo.setImageurl(account.getImageurl());
+				accexxUserNameVo.setRoleflg(account.getRoleflg());
+				accexxUserNameVo.setAge(account.getAge());
+				accexxUserNameVo.setSex(account.getSex());
+				accexxUserNameVo.setDocTitle(account.getDocTitle());
+				accexxUserNameVo.setDocProfessional(account.getDocProfessional());
+				accexxUserNameVo.setDocDescription(account.getDocDescription());
+				accexxUserNameVo.setDocHospital(account.getDocHospital());
+				accexxUserNameVo.setDocDepartmentName(account.getDocDepartmentName());
+				accexxUserNameVo.setPatPastHistory(account.getPatPastHistory());
+				accexxUserNameVo.setPatAllergyDrug(account.getPatAllergyDrug());
+				accexxUserNameVo.setPatStatusFlg(account.getPatStatusFlg());
+
 			} else {
 				accexxUserNameVo.setRsStatus("ng");
 				accexxUserNameVo.setErrInfo(new ErrInfo("402", "该用户不存在"));
