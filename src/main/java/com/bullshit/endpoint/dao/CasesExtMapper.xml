@@ -17,5 +17,6 @@
     select case_id, pat_id, isactive, pat_report, pat_pic_url_1, pat_pic_url_2, pat_pic_url_3, doc_suggestion, ctime, mtime
     from pat_case
     where pat_id = #{patId,jdbcType=VARCHAR}
+    order by mtime desc
   </select>
 </mapper>

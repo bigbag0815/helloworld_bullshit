@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.bullshit.endpoint.constants.Constants;
 import com.bullshit.endpoint.dao.CasesExtMapper;
+import com.bullshit.endpoint.dao.CasesMapper;
 import com.bullshit.endpoint.dao.DepartmentExtMapper;
 import com.bullshit.endpoint.entity.Cases;
 import com.bullshit.endpoint.entity.Department;
@@ -15,7 +16,10 @@ import com.bullshit.endpoint.utils.StringUtil;
 
 @Service("patLogic")
 public class PatBusinessLogic{
-	
+
+	@Autowired
+	CasesMapper casesMapper;
+
 	@Autowired
 	private CasesExtMapper casesExtMapper;
 	
@@ -39,4 +43,11 @@ public class PatBusinessLogic{
 		return departmentExtMapper.selectByName(department);
 	}
 
+	public Cases getCasesByPrimaryKey(String caseId) throws Exception {
+		return casesMapper.selectByPrimaryKey(caseId);
+	}
+	
+	public int updatePatCase(Cases patCase) throws Exception {
+		return casesMapper.updateByPrimaryKeySelective(patCase);
+	}
 }

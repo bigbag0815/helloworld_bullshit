@@ -50,7 +50,7 @@ public class AccessBusinessLogic {
 		List<HXAccount> res = new ArrayList<HXAccount>();
 		List<HXAccount> list = accountExtMapper.selectRelationPatInfo(key);
 		for (HXAccount account : list) {
-			if (StringUtils.isNotBlank(account.getImageurl())) {
+			if (account != null && StringUtils.isNotBlank(account.getImageurl())) {
 				account.setImageurl(StringUtil.urlPathEdit(account.getImageurl(), Constants.QINIU_PREFIX_URL));
 			}
 			res.add(account);
@@ -65,13 +65,16 @@ public class AccessBusinessLogic {
 	private List<Account> editList(List<Account> accountList) {
 		List<Account> res = new ArrayList<Account>();
 		for (Account account : accountList) {
+			if (StringUtils.isBlank(account.getName())) {
+				continue;
+			}
 			res.add(changeImageUrl(account));
 		}
 		return res;
 	}
 	
 	private Account changeImageUrl(Account account) {
-		if (StringUtils.isNotBlank(account.getImageurl())) {
+		if (account != null && StringUtils.isNotBlank(account.getImageurl())) {
 			account.setImageurl(StringUtil.urlPathEdit(account.getImageurl(), Constants.QINIU_PREFIX_URL));
 		}
 		return account;

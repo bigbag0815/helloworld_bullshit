@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.Cases;
 import com.bullshit.endpoint.entity.DocSurgeryPlanKey;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.HXAccount;
@@ -24,11 +27,14 @@ import com.bullshit.endpoint.entity.PatientCaseBean;
 import com.bullshit.endpoint.entity.Schedule;
 import com.bullshit.endpoint.entity.vo.DocPatientCaseVo;
 import com.bullshit.endpoint.entity.vo.DocSurgeryPlanVo;
+import com.bullshit.endpoint.entity.vo.PatCasesReq;
+import com.bullshit.endpoint.entity.vo.PatCasesVo;
 import com.bullshit.endpoint.exception.ApiException;
 import com.bullshit.endpoint.service.AccessBusinessLogic;
 import com.bullshit.endpoint.service.DocBusinessLogic;
 import com.bullshit.endpoint.service.DocPatRelationBusinessLogic;
 import com.bullshit.endpoint.service.PatBusinessLogic;
+import com.bullshit.endpoint.utils.DateUtil;
 
 @Component
 @Path("/v1/doc")
@@ -46,6 +52,8 @@ public class DocController {
 	
 	@Autowired
 	DocPatRelationBusinessLogic docPatRelationBusinessLogic;
+	
+	
 
 	/* ### 获取当前医生管理的病人和病人的病例历史记录 */
 	@GET
@@ -155,6 +163,75 @@ public class DocController {
 
 		return docSurgeryPlanVo;
 	};
+	
+	/**
+	 * 医生更新病例doc_suggestion字段
+	 * **/
+	@POST
+	@Path("/updatedocsuggestion")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PatCasesVo loginAccountInfo(PatCasesReq patCasesReq) {
+		
+		String caseId = patCasesReq.getCaseId();
+		String docId = patCasesReq.getDocId();
+		String patId = patCasesReq.getPatId();
+		String docSuggestion = patCasesReq.getDocSuggestion();
+		
+		System.out.println(caseId);
+		System.out.println(docId);
+		System.out.println(patId);
+		System.out.println(docSuggestion);
+		
+		PatCasesVo patCasesVo = new PatCasesVo();
+		try {
+			// doc id check
+			Account account = accessLogic.getAccountInfo(docId);
+			if (null == account) {
+				patCasesVo.setRsStatus("ng");
+				patCasesVo.setErrInfo(new ErrInfo("101", "您输入的用户名不存在"));
+				return patCasesVo;
+			} else if (!"doc".equals(account.getRoleflg())) {
+				patCasesVo.setRsStatus("ng");
+				patCasesVo.setErrInfo(new ErrInfo("102", "您输入的用户不是一个医生"));
+				return patCasesVo;
+			}
+			
+			// pat id check
+		    account = accessLogic.getAccountInfo(patId);
+			if (null == account) {
+				patCasesVo.setRsStatus("ng");
+				patCasesVo.setErrInfo(new ErrInfo("103", "您输入的用户名不存在"));
+				return patCasesVo;
+			} else if (!"pat".equals(account.getRoleflg())) {
+				patCasesVo.setRsStatus("ng");
+				patCasesVo.setErrInfo(new ErrInfo("104", "您输入的用户不是一个患者"));
+				return patCasesVo;
+			}
+			
+			// case id check and update data setting
+			Cases caseInfo = patLogic.getCasesByPrimaryKey(caseId);
+			if (caseInfo == null) {
+				patCasesVo.setRsStatus("ng");
+				patCasesVo.setErrInfo(new ErrInfo("105", "您输入的病例不存在"));
+				return patCasesVo;
+			} else {
+				caseInfo.setDocSuggestion(docSuggestion);
+				caseInfo.setMtime(DateUtil.getCurrentDate());
+			}
+			patLogic.updatePatCase(caseInfo);
+			
+			List<Cases> caseList = new ArrayList<Cases>();
+			caseList.add(caseInfo);
+			
+			patCasesVo.setRsStatus("ok");
+			patCasesVo.setCasesList(caseList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			patCasesVo.setRsStatus("ng");
+			patCasesVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+		return patCasesVo;
+	}
 	
 	@GET
 	@Path("/schedulelist/page/{did}")

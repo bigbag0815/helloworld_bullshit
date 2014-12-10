@@ -64,6 +64,7 @@ public class PatController {
 	@Produces(MediaType.APPLICATION_JSON)
 	public PatAccountVo getDoctorListByDepartId(
 			@QueryParam("deptname") String dName,
+			@QueryParam("keyword") String keyword,
 			@DefaultValue("1") @QueryParam("from") int fromNum,
 			@DefaultValue("10") @QueryParam("to") int toNum)
 			throws ApiException {
@@ -89,9 +90,10 @@ public class PatController {
 			}
 			AccountKey key = new AccountKey();
 			key.setDocDepartmentName(dName);
+			key.setKeyword(keyword);
 			key.setOffset(fromNum - 1);
 			key.setLimit(toNum - key.getOffset());
-			
+
 			PatAccountVo.setRsStatus("ok");
 			PatAccountVo.setAccountList(accessLogic.getByAccountKey(key));
 		} catch (Exception e) {

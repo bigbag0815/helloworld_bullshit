@@ -7,6 +7,8 @@ public class AccountKey extends BaseKey {
 	
 	private String docDepartmentName;
 	
+	private String keyword;
+	
 	public String getDocId() {
 		return docId;
 	}
@@ -29,5 +31,13 @@ public class AccountKey extends BaseKey {
 
 	public void setDocDepartmentName(String docDepartmentName) {
 		this.docDepartmentName = docDepartmentName;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword == null ? null : "%" + keyword.trim() + "%";
 	}
 }
