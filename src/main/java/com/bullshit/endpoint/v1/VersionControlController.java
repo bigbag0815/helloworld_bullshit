@@ -31,7 +31,7 @@ public class VersionControlController {
 
 	/* ### check客户端版本号，如果不是最新的，返回客户端更新用信息  */
 	@GET
-	@Path("/ckeckVersion/{version_number}")
+	@Path("/checkVersion/{version_number}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public VerCtrlVo getCaseInfoByPatientId(
 			@PathParam("version_number") String versionNumber) throws ApiException {
