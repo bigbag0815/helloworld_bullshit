@@ -12,6 +12,7 @@ import com.bullshit.endpoint.dao.AccountExtMapper;
 import com.bullshit.endpoint.dao.AccountMapper;
 import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.AccountWithRelationStatus;
 import com.bullshit.endpoint.entity.HXAccount;
 import com.bullshit.endpoint.utils.StringUtil;
 
@@ -60,6 +61,18 @@ public class AccessBusinessLogic {
 	
 	public List<Account> getByAccountKey(AccountKey key) throws Exception {
 		return editList(accountExtMapper.selectByAccountKey(key));
+	}
+	
+	public List<AccountWithRelationStatus> getRelationStatusByAccountKey(AccountKey key) throws Exception {
+		List<AccountWithRelationStatus> res = new ArrayList<AccountWithRelationStatus>();
+		List<AccountWithRelationStatus> accountList = accountExtMapper.selectRelationStatusInfo(key);
+		for (AccountWithRelationStatus account : accountList) {
+			if (account != null && StringUtils.isNotBlank(account.getImageurl())) {
+				account.setImageurl(StringUtil.urlPathEdit(account.getImageurl(), Constants.QINIU_PREFIX_URL));
+			}
+			res.add(account);
+		}
+	    return res;
 	}
 	
 	private List<Account> editList(List<Account> accountList) {

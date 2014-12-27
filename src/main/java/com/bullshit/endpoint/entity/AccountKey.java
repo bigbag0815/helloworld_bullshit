@@ -3,6 +3,8 @@ package com.bullshit.endpoint.entity;
 public class AccountKey extends BaseKey {
 	private String docId;
 	
+	private String patId;
+	
 	private String patStatus;
 	
 	private String docDepartmentName;
@@ -15,6 +17,14 @@ public class AccountKey extends BaseKey {
 
 	public void setDocId(String docId) {
 		this.docId = docId;
+	}
+
+	public String getPatId() {
+		return patId;
+	}
+
+	public void setPatId(String patId) {
+		this.patId = patId;
 	}
 
 	public String getPatStatus() {

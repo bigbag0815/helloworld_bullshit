@@ -19,6 +19,7 @@ import com.bullshit.endpoint.entity.AccountKey;
 import com.bullshit.endpoint.entity.Department;
 import com.bullshit.endpoint.entity.ErrInfo;
 import com.bullshit.endpoint.entity.vo.PatAccountVo;
+import com.bullshit.endpoint.entity.vo.PatAccountWithRelationStatusVo;
 import com.bullshit.endpoint.entity.vo.PatCasesVo;
 import com.bullshit.endpoint.entity.vo.PatDepartmentVo;
 import com.bullshit.endpoint.exception.ApiException;
@@ -103,6 +104,50 @@ public class PatController {
 		}
 
 		return PatAccountVo;
+	};
+	
+
+	/* ### 根据PatID, 查找和他相关的医生列表 */
+	@GET
+	@Path("/doclistByPatId")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PatAccountWithRelationStatusVo getDoctorListBypatId(
+			@QueryParam("patId") String patId,
+			@DefaultValue("1") @QueryParam("from") int fromNum,
+			@DefaultValue("10") @QueryParam("to") int toNum)
+			throws ApiException {
+		
+		PatAccountWithRelationStatusVo patAccountWithRelationStatusVo = new PatAccountWithRelationStatusVo();
+		
+		if (fromNum <= 0 || toNum <= 0 || toNum - fromNum < 0) {
+			patAccountWithRelationStatusVo.setRsStatus("ng");
+			patAccountWithRelationStatusVo.setErrInfo(new ErrInfo("102", "区间错误"));
+			return patAccountWithRelationStatusVo;
+		}
+		
+		try {
+			// patId设定则验证这个ID是否是一个有效的ID
+			if (StringUtils.isNotBlank(patId)) {
+				if (!accessLogic.isContainUser(patId)) {
+					patAccountWithRelationStatusVo.setRsStatus("ng");
+					patAccountWithRelationStatusVo.setErrInfo(new ErrInfo("101","该ID不存在"));
+					return patAccountWithRelationStatusVo;
+				}
+			}
+			AccountKey key = new AccountKey();
+			key.setPatId(patId);
+			key.setOffset(fromNum - 1);
+			key.setLimit(toNum - key.getOffset());
+
+			patAccountWithRelationStatusVo.setRsStatus("ok");
+			patAccountWithRelationStatusVo.setAccountList(accessLogic.getRelationStatusByAccountKey(key));
+		} catch (Exception e) {
+			e.printStackTrace();
+			patAccountWithRelationStatusVo.setRsStatus("ng");
+			patAccountWithRelationStatusVo.setErrInfo(new ErrInfo("500", e.getMessage()));
+		}
+
+		return patAccountWithRelationStatusVo;
 	};
 
 	/* ### 通过病人id获取病例 */

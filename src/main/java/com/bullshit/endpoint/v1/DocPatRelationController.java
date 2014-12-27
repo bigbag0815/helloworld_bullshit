@@ -211,5 +211,5 @@ public class DocPatRelationController {
 		}
 		
 		return docRatRelationVo;
-	}	
+	}
 }

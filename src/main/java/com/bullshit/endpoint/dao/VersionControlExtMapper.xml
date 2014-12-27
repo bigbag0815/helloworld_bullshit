@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bullshit.endpoint.dao.VersionControlExtMapper" >
+  <resultMap id="BaseResultMap" type="com.bullshit.endpoint.entity.VersionControl" >
+    <id column="Id" property="id" jdbcType="INTEGER" />
+    <result column="version_number" property="versionNumber" jdbcType="VARCHAR" />
+    <result column="version_url" property="versionUrl" jdbcType="VARCHAR" />
+    <result column="version_description" property="versionDescription" jdbcType="VARCHAR" />
+    <result column="version_update_datetime" property="versionUpdateDatetime" jdbcType="VARCHAR" />
+    <result column="isactive" property="isactive" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="TIMESTAMP" />
+    <result column="mtime" property="mtime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    Id, version_number, version_url, version_description, version_update_datetime, isactive, 
+    ctime, mtime
+  </sql>
+  <select id="selectAllVersionInfo" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from version_control
+    order by id desc
+  </select>
+</mapper>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bullshit.endpoint.entity.Account;
 import com.bullshit.endpoint.entity.AccountKey;
+import com.bullshit.endpoint.entity.AccountWithRelationStatus;
 import com.bullshit.endpoint.entity.HXAccount;
 
 public interface AccountExtMapper {
@@ -30,4 +31,6 @@ public interface AccountExtMapper {
      * @mbggenerated
      */
     Account selectByHxId(String hxId);
+    
+    List<AccountWithRelationStatus> selectRelationStatusInfo(AccountKey key);
 }
